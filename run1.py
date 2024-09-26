@@ -12,9 +12,9 @@ from jax import random, jit
 from jax.experimental.ode import odeint
 from jax.nn import relu, elu
 # from jax.config import config
-from jax.ops import index_update, index
-from jax import lax
-from jax.flatten_util import ravel_pytree
+# from jax.ops import index_update, index
+# from jax import lax
+# from jax.flatten_util import ravel_pytree
 import sklearn
 from sklearn.preprocessing import MinMaxScaler
 import itertools
