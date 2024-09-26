@@ -152,7 +152,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.1,history_size=10, line_search_fn="strong_wolfe",
+        self.optimizer = torch.optim.LBFGS(params, lr=0.0001,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
         pbar = tqdm(range(15), desc='description')
@@ -288,10 +288,10 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_train= min_max_normalize(s_train,s_bcs_min_value, s_bcs_max_value)
     s_train= s_train.__array__()
     print(s_bc1.shape)
-    print(s_bc2.shape)
-    print(s_bc3.shape)
+    # print(s_bc2.shape)
+    # print(s_bc3.shape)
     
-    print(s_train.shape)
+    # print(s_train.shape)
     outputs_i= torch.tensor(s_train)
 
     x_b = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
