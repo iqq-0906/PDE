@@ -11,7 +11,7 @@ from jax import random, jit
 # from jax.experimental import optimizers
 from jax.experimental.ode import odeint
 from jax.nn import relu, elu
-from jax.config import config
+# from jax.config import config
 from jax.ops import index_update, index
 from jax import lax
 from jax.flatten_util import ravel_pytree
