@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from efficient_kan import KAN
 import torch
 import torch.nn as nn
@@ -64,6 +65,51 @@ device = torch.device("cuda")
 #         Fi_1 = list(np.array(Fi_1.reshape(1, M-1))[0])
 #         f_matrx[i-1, 1:M]=Fi_1
 #     return f_matrx, delta_T,delta_S
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.distributions import Normal
+
+class DenseFlipout(nn.Module):
+    def __init__(self, in_features, out_features):
+        super(DenseFlipout, self).__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features))
+        self.weight_logvar = nn.Parameter(torch.Tensor(out_features, in_features))
+        self.bias_mu = nn.Parameter(torch.Tensor(out_features))
+        self.bias_logvar = nn.Parameter(torch.Tensor(out_features))
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        nn.init.kaiming_uniform_(self.weight_mu, a=math.sqrt(5))
+        nn.init.kaiming_uniform_(self.weight_logvar, a=math.sqrt(5))
+        nn.init.zeros_(self.bias_mu)
+        nn.init.zeros_(self.bias_logvar)
+
+    def forward(self, x):
+        weight = Normal(self.weight_mu, torch.exp(0.5 * self.weight_logvar)).rsample()
+        bias = Normal(self.bias_mu, torch.exp(0.5 * self.bias_logvar)).rsample()
+        return F.relu(F.linear(x, weight, bias))
+
+class BayesianNetwork(nn.Module):
+    def __init__(self):
+        super(BayesianNetwork, self).__init__()
+        self.hidden1 = DenseFlipout(100, 64)
+        self.hidden2 = DenseFlipout(64, 64)
+        self.hidden3 = DenseFlipout(64, 64)
+        self.hidden4 = DenseFlipout(64, 64)
+        self.output = nn.Linear(64, 1)  # 输出层
+
+    def forward(self, x):
+        x = self.hidden1(x)
+        x = self.hidden2(x)
+        x = self.hidden3(x)
+        x = self.hidden4(x)
+        return self.output(x)
+
+
+
 class PI_DeepONet(nn.Module):
     def __init__(self,model1,model2,model4,model5):
         super(PI_DeepONet, self).__init__()
@@ -422,11 +468,17 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 
 
 
-model1 =KAN([2,2,1], base_activation=nn.Identity)
-model2 = KAN([2,2,1], base_activation=nn.Identity)
-# model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([200,2,1], base_activation=nn.Identity)
-model5 = KAN([2,2,1], base_activation=nn.Identity)
+# model1 =KAN([2,2,1], base_activation=nn.Identity)
+# model2 = KAN([2,2,1], base_activation=nn.Identity)
+# # model3 = KAN([2,1], base_activation=nn.Identity)
+# model4 = KAN([200,2,1], base_activation=nn.Identity)
+# model5 = KAN([2,2,1], base_activation=nn.Identity)
+
+model1 =BayesianNetwork([2,2,1])
+model2 =BayesianNetwork([2,2,1])
+model4 =BayesianNetwork([200,2,1])
+model5 =BayesianNetwork([2,2,1])
+
 model= PI_DeepONet(model1,model2,model4,model5)
 model.to(device)
 model.train(u_1,u_2,u_s1,u_s2,dataloader1,dataloader2)
