@@ -21,7 +21,6 @@ start_time=time.time()
 import math
 from torch import vmap
 
-vmap_function = vmap(your_function, randomness='same')  # 或者 'different'
 
 device = torch.device("cuda")
 # def calculate_V(T,r,v,M,K):
