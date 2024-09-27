@@ -194,7 +194,7 @@ class PI_DeepONet(nn.Module):
        
         
         # Compute loss
-        loss = torch.mean((output.flatten() - s_pred) ** 2)
+        loss = torch.mean(abs(output.flatten() - s_pred))
         return loss
 
 
@@ -202,7 +202,7 @@ class PI_DeepONet(nn.Module):
     def loss_res(self,u1,u2,u_s1,u_s2,x,t,output):
         # Compute forward pass
         pred = self.residual_net(u1,u2,u_s1,u_s2,x,t)
-        loss = torch.mean((output.flatten() - pred) ** 2)
+        loss = torch.mean(abs(output.flatten() - pred))
         return loss
 
 
@@ -233,7 +233,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =pde_loss+bc_loss
+                    loss =pde_loss+100*bc_loss
                     loss.backward()
                     return loss
 
