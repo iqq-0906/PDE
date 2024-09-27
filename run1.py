@@ -96,6 +96,21 @@ class DenseFlipout(nn.Module):
 class BayesianNetwork(nn.Module):
     def __init__(self):
         super(BayesianNetwork, self).__init__()
+        self.hidden1 = DenseFlipout(2, 64)
+        self.hidden2 = DenseFlipout(64, 64)
+        self.hidden3 = DenseFlipout(64, 64)
+        self.hidden4 = DenseFlipout(64, 64)
+        self.output = nn.Linear(64, 1)  # 输出层
+
+    def forward(self, x):
+        x = self.hidden1(x)
+        x = self.hidden2(x)
+        x = self.hidden3(x)
+        x = self.hidden4(x)
+        return self.output(x)
+class BayesianNetwork1(nn.Module):
+    def __init__(self):
+        super(BayesianNetwork, self).__init__()
         self.hidden1 = DenseFlipout(200, 64)
         self.hidden2 = DenseFlipout(64, 64)
         self.hidden3 = DenseFlipout(64, 64)
@@ -477,7 +492,7 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 
 model1 =BayesianNetwork()
 model2 =BayesianNetwork()
-model4 =BayesianNetwork()
+model4 =BayesianNetwork1()
 model5 =BayesianNetwork()
 
 model= PI_DeepONet(model1,model2,model4,model5)
