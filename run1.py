@@ -69,63 +69,6 @@ device = torch.device("cuda")
 #         Fi_1 = list(np.array(Fi_1.reshape(1, M-1))[0])
 #         f_matrx[i-1, 1:M]=Fi_1
 #     return f_matrx, delta_T,delta_S
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.distributions import Normal
-
-class DenseFlipout(nn.Module):
-    def __init__(self, in_features, out_features):
-        super(DenseFlipout, self).__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features))
-        self.weight_logvar = nn.Parameter(torch.Tensor(out_features, in_features))
-        self.bias_mu = nn.Parameter(torch.Tensor(out_features))
-        self.bias_logvar = nn.Parameter(torch.Tensor(out_features))
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        nn.init.kaiming_uniform_(self.weight_mu, a=math.sqrt(5))
-        nn.init.kaiming_uniform_(self.weight_logvar, a=math.sqrt(5))
-        nn.init.zeros_(self.bias_mu)
-        nn.init.zeros_(self.bias_logvar)
-
-    def forward(self, x):
-        weight = Normal(self.weight_mu, torch.exp(0.5 * self.weight_logvar)).rsample()
-        bias = Normal(self.bias_mu, torch.exp(0.5 * self.bias_logvar)).rsample()
-        return F.relu(F.linear(x, weight, bias))
-
-class BayesianNetwork(nn.Module):
-    def __init__(self):
-        super(BayesianNetwork, self).__init__()
-        self.hidden1 = DenseFlipout(2, 64)
-        self.hidden2 = DenseFlipout(64, 64)
-        self.hidden3 = DenseFlipout(64, 64)
-        self.hidden4 = DenseFlipout(64, 64)
-        self.output = nn.Linear(64, 1)  # 输出层
-
-    def forward(self, x):
-        x = self.hidden1(x)
-        x = self.hidden2(x)
-        x = self.hidden3(x)
-        x = self.hidden4(x)
-        return self.output(x)
-class BayesianNetwork1(nn.Module):
-    def __init__(self):
-        super(BayesianNetwork1, self).__init__()
-        self.hidden1 = DenseFlipout(200, 64)
-        self.hidden2 = DenseFlipout(64, 64)
-        self.hidden3 = DenseFlipout(64, 64)
-        self.hidden4 = DenseFlipout(64, 64)
-        self.output = nn.Linear(64, 1)  # 输出层
-
-    def forward(self, x):
-        x = self.hidden1(x)
-        x = self.hidden2(x)
-        x = self.hidden3(x)
-        x = self.hidden4(x)
-        return self.output(x)
 
 
 
@@ -383,7 +326,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_bc11 = min_max_normalize(s_bc4, s_bcs_min_value, s_bcs_max_value)
     s_bc11= s_bc11.__array__()
     s_bc11 = torch.tensor(s_bc11)
-    u_1= torch.cat((x_bc11,t_bc11), dim=1)  # shape: (4, 2)
+    u_1= torch.cat((x_bc11,t_bc11,s_bc11), dim=1)  # shape: (4, 2)
     u_s1=s_bc11
 
     s_bc5 = f2(x_bc2,np_K)
@@ -399,7 +342,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_bc22 = min_max_normalize(s_bc5, s_bcs_min_value, s_bcs_max_value)
     s_bc22 = s_bc22.__array__()
     s_bc22 = torch.tensor(s_bc22)
-    u_2 = torch.cat((x_bc22, t_bc22), dim=1)
+    u_2 = torch.cat((x_bc22, t_bc22,s_bc22), dim=1)
     u_s2=s_bc22
 
 
@@ -487,8 +430,8 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 
 
 
-model1 =KAN([2,2,1], base_activation=nn.Identity)
-model2 = KAN([2,2,1], base_activation=nn.Identity)
+model1 =KAN([3,2,1], base_activation=nn.Identity)
+model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([200,2,1], base_activation=nn.Identity)
 model5 = KAN([2,2,1], base_activation=nn.Identity)
