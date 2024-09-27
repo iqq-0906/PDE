@@ -96,7 +96,7 @@ class DenseFlipout(nn.Module):
 class BayesianNetwork(nn.Module):
     def __init__(self):
         super(BayesianNetwork, self).__init__()
-        self.hidden1 = DenseFlipout(100, 64)
+        self.hidden1 = DenseFlipout(200, 64)
         self.hidden2 = DenseFlipout(64, 64)
         self.hidden3 = DenseFlipout(64, 64)
         self.hidden4 = DenseFlipout(64, 64)
