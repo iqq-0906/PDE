@@ -18,6 +18,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import time
 from torch.func import jacrev, hessian
 start_time=time.time()
+import math
 device = torch.device("cuda")
 # def calculate_V(T,r,v,M,K):
 #     delta_T=T/M
