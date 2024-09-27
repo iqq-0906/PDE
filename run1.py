@@ -487,16 +487,16 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 
 
 
-# model1 =KAN([2,2,1], base_activation=nn.Identity)
-# model2 = KAN([2,2,1], base_activation=nn.Identity)
-# # model3 = KAN([2,1], base_activation=nn.Identity)
-# model4 = KAN([200,2,1], base_activation=nn.Identity)
-# model5 = KAN([2,2,1], base_activation=nn.Identity)
+model1 =KAN([2,2,1], base_activation=nn.Identity)
+model2 = KAN([2,2,1], base_activation=nn.Identity)
+# model3 = KAN([2,1], base_activation=nn.Identity)
+model4 = KAN([200,2,1], base_activation=nn.Identity)
+model5 = KAN([2,2,1], base_activation=nn.Identity)
 
-model1 =BayesianNetwork()
-model2 =BayesianNetwork()
-model4 =BayesianNetwork1()
-model5 =BayesianNetwork()
+# model1 =BayesianNetwork()
+# model2 =BayesianNetwork()
+# model4 =BayesianNetwork1()
+# model5 =BayesianNetwork()
 
 model= PI_DeepONet(model1,model2,model4,model5)
 model.to(device)
