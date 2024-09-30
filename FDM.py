@@ -5,7 +5,6 @@ import numpy as nnp
 from jax import random, grad, vmap, jit, hessian
 
 from jax.nn import relu, elu
-from jax.ops import index_update, index
 from jax import lax
 from jax.flatten_util import ravel_pytree
 import sklearn
