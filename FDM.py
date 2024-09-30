@@ -2,6 +2,7 @@ import jax
 import torch
 import numpy as nnp
 import sklearn
+from jax import random
 from sklearn.preprocessing import MinMaxScaler
 import itertools
 from functools import partial
