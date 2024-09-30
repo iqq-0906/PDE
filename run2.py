@@ -160,7 +160,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.1,history_size=10, line_search_fn="strong_wolfe",
+        self.optimizer = torch.optim.LBFGS(params, lr=0.01,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
         pbar = tqdm(range(10), desc='description')
@@ -400,8 +400,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =600 # number of output sensors, 100 for each side
-Q =2000  # number of collocation points for each input sample
+P =1200 # number of output sensors, 100 for each side
+Q =8000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -440,8 +440,8 @@ print("outputs_i shape:", outputs_i.shape)
 dataset1 = TensorDataset(x_i,t_i,outputs_i)
 dataset2 = TensorDataset(x_b,t_b,outputs_b)
 # dataset3 = TensorDataset(x_bc4,t_bc4,s_bc4)
-batch_size1= 20
-batch_size2= 20
+batch_size1= 40
+batch_size2= 40
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
@@ -451,7 +451,7 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([200,2,1], base_activation=nn.Identity)
+model4 = KAN([400,2,1], base_activation=nn.Identity)
 model5 = KAN([2,2,2,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
