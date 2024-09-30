@@ -1,12 +1,6 @@
 import jax
 import torch
-import jax.numpy as np
 import numpy as nnp
-from jax import random, grad, vmap, jit, hessian
-
-from jax.nn import relu, elu
-from jax import lax
-from jax.flatten_util import ravel_pytree
 import sklearn
 from sklearn.preprocessing import MinMaxScaler
 import itertools
