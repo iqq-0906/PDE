@@ -73,18 +73,31 @@ device = torch.device("cuda")
 
 
 class PI_DeepONet(nn.Module):
-    def __init__(self,model1,model2,model4,model5):
+    def __init__(self, model1, model2, model4, model5):
         super(PI_DeepONet, self).__init__()
         # Network initialization and evaluation functions
         self.model1 = model1
         self.model2 = model2
-        # self.model3 = model3
         self.model4 = model4
         self.model5 = model5
+        
+        # 权重初始化
+        self.init_weights()
 
+        self.bc_losses = []
+        self.pde_losses = []
 
-        self. bc_losses = []
-        self. pde_losses = []
+    def init_weights(self):
+        for model in [self.model1, self.model2, self.model4, self.model5]:
+            for layer in model.children():
+                if isinstance(layer, nn.Linear):
+                    # 使用Xavier均匀初始化
+                    nn.init.xavier_uniform_(layer.weight)
+                    layer.bias.data.fill_(0.01)  # 设置偏置为0.01
+                elif isinstance(layer, nn.Conv2d):
+                    # 使用Kaiming（He）初始化
+                    nn.init.kaiming_uniform_(layer.weight, nonlinearity='relu')
+                    layer.bias.data.fill_(0.01)  # 设置偏置为0.01
     def reshape(self,X):
         reshaped_X = X.reshape(-1,)
         return reshaped_X
