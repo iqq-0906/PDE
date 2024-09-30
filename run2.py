@@ -330,8 +330,11 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # u_s1=s_bc11
    
     x_bc11=x_bc4.__array__()
+    x_bc11=x_bc11.__array__()
     t_bc11=t_bc1.__array__()
+    t_bc11 = torch.tensor(t_bc11)
     s_bc11=s_bc4.__array__()
+    s_bc11= s_bc11.__array__()
     u_1= torch.cat((x_bc11,t_bc11,s_bc11), dim=1)  # shape: (4, 2)
     u_s1=s_bc11
 
@@ -340,8 +343,11 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_bc5 = s_bc5.reshape(-1, 1)
 
     x_bc22=x_bc2.__array__()
+    x_bc22 = torch.tensor(x_bc22)
     t_bc22=t_bc4.__array__()
+    t_bc22 = torch.tensor(t_bc22)
     s_bc22=s_bc5.__array__()
+    s_bc22 = torch.tensor(s_bc22)
     u_2 = torch.cat((x_bc22, t_bc22,s_bc22), dim=1)
     u_s2=s_bc22
 
