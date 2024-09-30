@@ -3,8 +3,7 @@ import torch
 import jax.numpy as np
 import numpy as nnp
 from jax import random, grad, vmap, jit, hessian
-from jax.experimental import optimizers
-from jax.experimental.ode import odeint
+
 from jax.nn import relu, elu
 from jax.config import config
 from jax.ops import index_update, index
