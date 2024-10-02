@@ -464,7 +464,7 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([3000,2,2,1], base_activation=nn.Identity)
+model4 = KAN([4000,2,2,1], base_activation=nn.Identity)
 model5 = KAN([2,2,2,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
