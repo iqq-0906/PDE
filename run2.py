@@ -483,11 +483,11 @@ x_test=x_test.unsqueeze(1).to(device)
 t_test=torch.tensor(t_test).float()
 t_test=t_test.unsqueeze(1).to(device)
 
-x_test=min_max_normalize(x_test,x_bcs_min_value, x_bcs_max_value)
-t_test=min_max_normalize(t_test,t_bcs_min_value,t_bcs_max_value)
+# x_test=min_max_normalize(x_test,x_bcs_min_value, x_bcs_max_value)
+# t_test=min_max_normalize(t_test,t_bcs_min_value,t_bcs_max_value)
 
 s_pred = model.operator_net(u_1,u_2,u_s1, u_s2, x_test,t_test)
-s_pred=s_pred*s_bcs_max_value
+# s_pred=s_pred*s_bcs_max_value
 s_true=data.iloc[:,3]
 s_true=torch.tensor(s_true).to(device)
 error_s =(s_pred- s_true)/s_true
