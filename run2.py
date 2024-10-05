@@ -414,7 +414,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =12000 # number of output sensors, 100 for each side
-Q =8000  # number of collocation points for each input sample
+Q =10000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
