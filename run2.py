@@ -207,7 +207,7 @@ class PI_DeepONet(nn.Module):
             #     model2.update_grid_from_samples(u2)
                 # model4.update_grid_from_samples(u_b1)
                 # model5.update_grid_from_samples(u_b2)
-                self.optimizer.step(closure)
+                # self.optimizer.step(closure)
        
 
             if _ % 1 == 0:
