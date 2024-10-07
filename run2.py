@@ -177,7 +177,7 @@ class PI_DeepONet(nn.Module):
         #                        tolerance_grad=1e-64, tolerance_change=1e-64)
         self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.001)
     
-        pbar = tqdm(range(10), desc='description')
+        pbar = tqdm(range(100), desc='description')
     
        
         for _ in pbar:
@@ -423,7 +423,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =3000 # number of output sensors, 100 for each side
-Q =2000  # number of collocation points for each input sample
+Q =6000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
