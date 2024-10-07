@@ -177,7 +177,7 @@ class PI_DeepONet(nn.Module):
                                tolerance_grad=1e-64, tolerance_change=1e-64)
         # self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.00001)
     
-        pbar = tqdm(range(100), desc='description')
+        pbar = tqdm(range(20), desc='description')
     
        
         for _ in pbar:
