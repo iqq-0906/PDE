@@ -173,7 +173,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        # self.optimizer = torch.optim.LBFGS(params, lr=0.001,history_size=10, line_search_fn="strong_wolfe",
+        # self.optimizer = torch.optim.LBFGS(params, lr=0.1,history_size=10, line_search_fn="strong_wolfe",
         #                        tolerance_grad=1e-64, tolerance_change=1e-64)
         self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.001)
     
@@ -196,7 +196,7 @@ class PI_DeepONet(nn.Module):
                 
                 bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                 pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
-                loss =0.001*pde_loss+5*bc_loss
+                loss =0.001*pde_loss+1000*bc_loss
 
                 # 反向传播和优
                 loss.backward()
