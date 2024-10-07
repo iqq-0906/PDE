@@ -173,9 +173,9 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        # self.optimizer = torch.optim.LBFGS(params, lr=0.1,history_size=10, line_search_fn="strong_wolfe",
-        #                        tolerance_grad=1e-64, tolerance_change=1e-64)
-        self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.00001)
+        self.optimizer = torch.optim.LBFGS(params, lr=0.01,history_size=10, line_search_fn="strong_wolfe",
+                               tolerance_grad=1e-64, tolerance_change=1e-64)
+        # self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.00001)
     
         pbar = tqdm(range(100), desc='description')
     
@@ -183,31 +183,31 @@ class PI_DeepONet(nn.Module):
         for _ in pbar:
             self.optimizer.zero_grad()
             for (x_i, t_i,outputs_i),(x_b, t_b, outputs_b) in zip(dataloader1, dataloader2):
-                # def closure():
-                #     global pde_loss, bc_loss
-                #     self.optimizer.zero_grad()
-                #     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
-                #     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
-                #     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                #     loss =0.001*pde_loss+10*bc_loss
-                #     loss.backward()
-                #     return loss
+                def closure():
+                    global pde_loss, bc_loss
+                    self.optimizer.zero_grad()
+                    bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
+                    pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
+                    # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
+                    loss =0.01*pde_loss+10*bc_loss
+                    loss.backward()
+                    return loss
 
                 
-                bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
-                pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
-                loss =0.001*pde_loss+1000*bc_loss
+                # bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
+                # pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
+                # loss =0.001*pde_loss+1000*bc_loss
 
-                # 反向传播和优
-                loss.backward()
-                self.optimizer.step()
+                # # 反向传播和优
+                # loss.backward()
+                # self.optimizer.step()
 
             # # if _ % 5 == 0 and _ < 50:
             #     model1.update_grid_from_samples(u1)
             #     model2.update_grid_from_samples(u2)
                 # model4.update_grid_from_samples(u_b1)
                 # model5.update_grid_from_samples(u_b2)
-                # self.optimizer.step(closure)
+                self.optimizer.step(closure)
        
 
             if _ % 1 == 0:
@@ -423,7 +423,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =3000 # number of output sensors, 100 for each side
-Q =6000  # number of collocation points for each input sample
+Q =2000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
