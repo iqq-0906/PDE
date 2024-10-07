@@ -196,7 +196,7 @@ class PI_DeepONet(nn.Module):
                 
                 bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                 pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
-                loss =0.001*pde_loss+10*bc_loss
+                loss =0.001*pde_loss+5*bc_loss
 
                 # 反向传播和优
                 loss.backward()
