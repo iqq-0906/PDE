@@ -173,7 +173,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.1,history_size=10, line_search_fn="strong_wolfe",
+        self.optimizer = torch.optim.LBFGS(params, lr=0.01,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
         pbar = tqdm(range(10), desc='description')
@@ -413,7 +413,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =9000 # number of output sensors, 100 for each side
+P =3000 # number of output sensors, 100 for each side
 Q =5000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
@@ -461,11 +461,11 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 
 
 
-model1 =KAN([3,2,2,1], base_activation=nn.Identity)
-model2 = KAN([3,2,2,1], base_activation=nn.Identity)
+model1 =KAN([3,2,1], base_activation=nn.Identity)
+model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([3000,2,2,1], base_activation=nn.Identity)
-model5 = KAN([2,2,2,1], base_activation=nn.Identity)
+model4 = KAN([1000,2,1], base_activation=nn.Identity)
+model5 = KAN([2,2,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
