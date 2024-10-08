@@ -176,7 +176,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =pde_loss+1000000*bc_loss
+                    loss =100*pde_loss+100000*bc_loss
                     loss.backward()
                     return loss
 
@@ -382,8 +382,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =6000 # number of output sensors, 100 for each side
-Q =4000  # number of collocation points for each input sample
+P =3000 # number of output sensors, 100 for each side
+Q =2000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
