@@ -3,20 +3,35 @@ import tensorflow as tf
 from tensorflow.keras import Model, layers, optimizers
 import pandas as pd
 
-# 定义神经网络模型
-class SimpleModel(Model):
-    def __init__(self):
-        super(SimpleModel, self).__init__()
-        self.hidden1 = layers.Dense(50, activation='tanh')
-        self.hidden2 = layers.Dense(50, activation='tanh')
-        self.output_layer = layers.Dense(1)
+# 定义多层感知机模型
+class MLP(Model):
+    def __init__(self, input_dim, hidden_units=[64, 64], output_dim=1):
+        super(MLP, self).__init__()
+        self.hidden_layers = [layers.Dense(units, activation='relu') for units in hidden_units]
+        self.output_layer = layers.Dense(output_dim)
 
     def call(self, inputs):
-        x, t = inputs
-        x_t = tf.concat([x, t], axis=1)
-        hidden = self.hidden1(x_t)
-        hidden = self.hidden2(hidden)
-        return self.output_layer(hidden)
+        x = inputs
+        for layer in self.hidden_layers:
+            x = layer(x)
+        return self.output_layer(x)
+
+# 计算偏导数
+def compute_derivatives(model, x, t):
+    with tf.GradientTape(persistent=True) as tape2:
+        tape2.watch([x, t])
+        with tf.GradientTape(persistent=True) as tape1:
+            tape1.watch([x, t])
+            v = model(tf.concat([x, t], axis=1))
+        
+        dV_dx = tape1.gradient(v, x)
+        dV_dt = tape1.gradient(v, t)
+        
+    d2V_dx2 = tape2.gradient(dV_dx, x)
+    
+    del tape1, tape2  # 释放资源
+    
+    return dV_dx, dV_dt, d2V_dx2
 
 # 训练单个点
 def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001, tol=0.001, max_iter=10000):
@@ -28,7 +43,7 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
 
         with tf.GradientTape() as tape:
             # 获取模型预测值
-            v_pred = model([x_sample_tf, t_sample_tf])
+            v_pred = model(tf.concat([x_sample_tf, t_sample_tf], axis=1))
             # 计算损失为当前预测值与目标值之间的平方误差
             loss = tf.reduce_mean(tf.square(v_pred - v_target))
 
@@ -50,23 +65,6 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
 
     return v_pred.numpy()[0][0]
 
-# 计算偏导数
-def compute_derivatives(model, x, t):
-    with tf.GradientTape(persistent=True) as tape2:
-        tape2.watch([x, t])
-        with tf.GradientTape(persistent=True) as tape1:
-            tape1.watch([x, t])
-            v = model([x, t])
-        
-        dV_dx = tape1.gradient(v, x)
-        dV_dt = tape1.gradient(v, t)
-        
-    d2V_dx2 = tape2.gradient(dV_dx, x)
-    
-    del tape1, tape2  # 释放资源
-    
-    return dV_dx, dV_dt, d2V_dx2
-
 # 训练模型
 def train_model(model, x_data, t_data, v_target, learning_rate=0.001):
     v_converged = []
@@ -78,15 +76,30 @@ def train_model(model, x_data, t_data, v_target, learning_rate=0.001):
 
     return np.array(v_converged)
 
-# 初始化模型
-model = SimpleModel()
+# 初始化 MLP 模型
+model = MLP(input_dim=2)  # 输入 x 和 t 共 2 个特征
 
 # 示例输入数据
 v_target = np.full(100, 7.233)   # 初始标签
 data = pd.read_csv('data.csv')
-x_test = data.iloc[:, 1].values  # 确保这是一个一维数组
-t_test = data.iloc[:, 2].values / 365
+x_test = data.iloc[:, 1].values.reshape(-1, 1)  # 确保是二维数组
+t_test = (data.iloc[:, 2].values / 365).reshape(-1, 1)
 
 # 训练模型
 v_converged = train_model(model, x_test, t_test, v_target)
 print("Converged values:", v_converged)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
