@@ -1,117 +1,83 @@
-isamp = 3000
-t = np.arange(0,1,0.01)
-pps = 20
-tsamp = pps*isamp
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras import Model, layers, optimizers
 
-data_train = spi.loadmat('AD_5000_DP_TrData.mat')
+# 定义神经网络模型
+class PINN(Model):
+    def __init__(self):
+        super(PINN, self).__init__()
+        self.hidden1 = layers.Dense(50, activation='tanh')
+        self.hidden2 = layers.Dense(50, activation='tanh')
+        self.output_layer = layers.Dense(1)
 
-u_in = data_train['u_in'][0:tsamp,:]
-x_t_in = data_train['x_t_in'][0:tsamp,:]
-s_in = data_train['s_in'][0:tsamp,:]
+    def call(self, inputs):
+        x, t = inputs
+        x_t = tf.concat([x, t], axis=1)
+        hidden = self.hidden1(x_t)
+        hidden = self.hidden2(hidden)
+        return self.output_layer(hidden)
 
-max_u = np.max(u_in)
-min_u = np.min(u_in)
+# 计算偏导数
+def compute_derivatives(model, x, t):
+    with tf.GradientTape(persistent=True) as tape:
+        tape.watch(x)
+        tape.watch(t)
+        v = model([x, t])
 
-u_in = (u_in-min_u)/(max_u-min_u)
+    dV_dx = tape.gradient(v, x)
+    dV_dt = tape.gradient(v, t)
+    
+    return dV_dx, dV_dt, v
 
-max_t = np.max(x_t_in)
-min_t = np.min(x_t_in)
+# 训练过程
+def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001, tol=0.001, max_iter=10000):
+    optimizer = optimizers.Adam(learning_rate)
+    
+    for iteration in range(max_iter):
+        x_sample_tf = tf.convert_to_tensor([[x_sample]], dtype=tf.float32)
+        t_sample_tf = tf.convert_to_tensor([[t_sample]], dtype=tf.float32)
+        v_target_tf = tf.convert_to_tensor([[v_target]], dtype=tf.float32)
 
-x_t_in = (x_t_in-min_t)/(max_t-min_t)
+        with tf.GradientTape() as tape:
+            dV_dx, dV_dt, v_pred = compute_derivatives(model, x_sample_tf, t_sample_tf)
+            loss = tf.reduce_mean(tf.square(v_pred - v_target_tf))
 
-max_s = np.max(s_in)
-min_s = np.min(s_in)
+        # 更新标签
+        v_target_new = 
 
-s_in = (s_in-min_s)/(max_s-min_s)
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Lambda, Dense
+        # 检查收敛条件
+        if np.abs(v_pred.numpy() - v_target_new) < tol:
+            print(f'Converged at x={x_sample}, t={t_sample} after {iteration} iterations')
+            return v_target_new[0][0]
 
-bs = tsamp
+        # 优化步骤
+        grads = tape.gradient(loss, model.trainable_variables)
+        optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-def fn(x):
-    y = tf.einsum("ij, ij->i", x[0], x[1])
-    y = tf.expand_dims(y, axis = 1)
-    return y
+        # 更新标签
+        v_target = v_target_new[0][0]  # 更新为新的标签
 
-tfd = tfp.distributions
-tfb = tfp.bijectors
+    return v_target
 
-def normal_sp(params):
-    return tfd.Normal(loc = params[:, 0:1], scale = 0.001+tf.math.softplus(params[:, 1:2]))
+# 训练过程
+def train_model(model, x_data, t_data, v_target, learning_rate=0.001):
+    v_converged = []
+    for i in range(len(x_data)):
+        x_sample = x_data[i]
+        t_sample = t_data[i]
+        v_converged_value = train_single_point(model, x_sample, t_sample, v_target[i], learning_rate)
+        v_converged.append(v_converged_value)
 
-def negloglikelihood(y_true, y_pred):
-    return tf.keras.backend.sum(-y_pred.log_prob(y_true))+(sum(model.losses)/bs)
+    return np.array(v_converged)
 
-hln = 30
+# 初始化模型
+model = PINN()
 
-inputsB = Input(shape = (100,), name = 'inputsB')
-hiddenB = tfp.layers.DenseFlipout(hln, activation = "relu")(inputsB)
-hiddenB = tfp.layers.DenseFlipout(hln, activation = "relu")(hiddenB)
-hiddenB = tfp.layers.DenseFlipout(hln, activation = "relu")(hiddenB)
+# 示例输入数据
+x_data = np.random.rand(100)  # 100个样本，x变量
+t_data = np.random.rand(100)  # 100个样本，t变量
+v_target = np.random.rand(100)  # 初始标签
 
-inputsT = Input(shape = (1,), name = 'inputsT')
-hiddenT = tfp.layers.DenseFlipout(hln, activation = "relu")(inputsT)
-hiddenT = tfp.layers.DenseFlipout(hln, activation = "relu")(hiddenT)
-hiddenT = tfp.layers.DenseFlipout(hln, activation = "relu")(hiddenT)
-
-combined = Lambda(fn, output_shape = [None, 1])([hiddenB, hiddenT])
-output = tfp.layers.DenseFlipout(2)(combined)
-
-dist = tfp.layers.DistributionLambda(normal_sp)(output)
-model = Model(inputs = [inputsB, inputsT], outputs = dist)
-
-model.summary()
-
-optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-3)
-spe = 25
-string = './model/model_s1/'+str(spe)
-
-@tf.function
-def train_step():
-    with tf.GradientTape() as tape:
-        loss_value = 0
-        for i in range(0,spe):
-            logits = model({"inputsB":u_in, "inputsT":x_t_in}, training=True)
-            loss_value = loss_value + negloglikelihood(s_in, logits)
-        loss_value = loss_value*(1/spe)
-    grads = tape.gradient(loss_value, model.trainable_weights)
-    optimizer.apply_gradients(zip(grads, model.trainable_weights))
-    return loss_value
-
-epochs = 10000
-loss = np.zeros(epochs)
-
-for epoch in range(epochs):
-    loss_value = train_step()
-    loss[epoch] = loss_value.numpy()
-    if loss[epoch] <= np.min(loss[0:epoch+1]):
-        model.save_weights(string)
-        last_saved_wt = epoch
-    if epoch%10 == 0:
-        print("Epoch %d, loss %.2f" % (epoch, loss[epoch]))
-
-print(last_saved_wt)
-t = np.arange(0,1,0.01)
-testdata = spi.loadmat('AD_TestData.mat')
-
-u_in_test = testdata['u_in_test']
-x_t_in_test = testdata['x_t_in_test']
-s_in_test = testdata['s_in_test']
-u_in_test = (u_in_test-min_u)/(max_u-min_u)
-x_t_in_test = (x_t_in_test-min_t)/(max_t-min_t)
-s_in_test = (s_in_test-min_s)/(max_s-min_s)
-nsamples = 100
-nps = 1
-pred = np.zeros([nsamples*nps,1000000])
-for i in range(0,nsamples):
-    if i%5 == 0:
-        print(i)
-    pred[nps*i:nps*(i+1),:] = np.squeeze((model({"inputsB":u_in_test, "inputsT":x_t_in_test})).sample(nps))
-
-pred = (pred*(max_s-min_s))+min_s
-s_in_test = (s_in_test*(max_s-min_s))+min_s
-
-print()
-print(np.mean((s_in_test-np.mean(pred, axis = 0)[..., np.newaxis])**2))
-print(np.mean((s_in_test)**2))
-print(np.mean((s_in_test-np.mean(pred, axis = 0)[..., np.newaxis])**2)/np.mean((s_in_test)**2))
+# 训练模型
+v_converged = train_model(model, x_data, t_data, v_target)
+print("Converged values:", v_converged)
