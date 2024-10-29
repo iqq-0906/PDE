@@ -19,7 +19,7 @@ class MLP(Model):
         return self.output_layer(hidden)
 
 # 训练单个点
-def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.01, tol=0.001, max_iter=10000):
+def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.0001, tol=0.001, max_iter=10000):
     optimizer = optimizers.Adam(learning_rate)
     
     # 转换输入为张量形式
@@ -51,7 +51,9 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.01, 
                 print(f'Converged at x={x_sample}, t={t_sample} after {iteration} iterations with value {v_pred.numpy().item()}')
                 return v_pred.numpy().item()
             else:
-                print(f"Converged value {v_pred.numpy().item()} is less than 0. Retraining...")
+                # 重新初始化模型权重以重新训练
+                model.set_weights([np.random.rand(*w.shape) for w in model.get_weights()])
+                print(f"Converged value {v_pred.numpy().item()} is less than 0. Retraining with new weights...")
 
     return max(v_pred.numpy().item(), 0)  # 返回正值或0（确保非负）
 
@@ -93,5 +95,4 @@ x_test = data.iloc[:, 1].values  # 确保这是一个一维数组
 t_test = data.iloc[:, 2].values / 365
 
 # 训练模型
-v_converged = train_model(model, x_test, t_test, v_target)
-print("Converged values:", v_converged)
+v_converged = train_model(model, x_test, t_test, v_ta
