@@ -66,7 +66,7 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
             return v_pred.numpy()[0][0]  # 返回收敛的预测值
 
         # 更新 v_target 为当前迭代的 v_pred 值
-        v_target = v_pred.numpy()[0][0]
+        v_target =(dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx)/ 0.025610
     
     return v_pred.numpy()[0][0]
 
