@@ -82,7 +82,7 @@ model = PINN()
 # 示例输入数据
 # x_data = np.random.rand(100)  # 100个样本，x变量
 # t_data = np.random.rand(100)  # 100个样本，t变量
-v_target = np.random.rand(100)  # 初始标签
+v_target = np.full(100, 7.233)   # 初始标签
 data=pd.read_csv('data.csv')
 x_test=data.iloc[:,1]
 t_test=data.iloc[:,2]
