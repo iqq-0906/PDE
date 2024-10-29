@@ -89,7 +89,7 @@ def train_model(model, x_data, t_data, v_target, learning_rate=0.001):
 model = MLP()
 
 # 示例输入数据
-v_target = np.full(100, 7.233)   # 初始标签
+v_target = np.full(100, 2.411)   # 初始标签
 data = pd.read_csv('data.csv')
 x_test = data.iloc[:, 1].values  # 确保这是一个一维数组
 t_test = data.iloc[:, 2].values / 365
