@@ -44,26 +44,27 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
         v_target_tf = tf.convert_to_tensor([[v_target]], dtype=tf.float32)
 
         with tf.GradientTape() as tape:
+            # 计算偏导数和预测值
             dV_dx, dV_dt, d2V_dx2, v_pred = compute_derivatives(model, x_sample_tf, t_sample_tf)
-            # 定义损失函数
-            loss = tf.reduce_mean(tf.square(v_pred - v_target_tf) + tf.square(d2V_dx2))
 
-        # 更新标签
-        v_target_new = dV_dt + 0.5 * (0.165856529)**2 *( x_sample_tf**2) *d2V_dx2+0.025610* x_sample_tf* dV_dx
+        # 计算新的标签值
+        v_target_new = dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx
 
         # 检查收敛条件
         if np.abs(v_pred.numpy() - v_target_new) < tol:
             print(f'Converged at x={x_sample}, t={t_sample} after {iteration} iterations')
-            return v_target_new[0][0]
+            return v_pred.numpy()[0][0]
 
-        # 优化步骤
+        # 优化步骤：逐步优化模型参数，以便下一次迭代中的 v_pred 更接近 v_target_new
+        loss = tf.reduce_mean(tf.square(v_pred - v_target_tf))
         grads = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-        # 更新标签
-        v_target = v_target_new[0][0]  # 更新为新的标签
+        # 更新 v_target 为新的迭代标签值
+        v_target = v_target_new.numpy()[0][0]
 
-    return v_target
+    return v_pred.numpy()[0][0]
+
 
 # 训练模型
 def train_model(model, x_data, t_data, v_target, learning_rate=0.001):
