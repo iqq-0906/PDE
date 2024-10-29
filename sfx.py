@@ -43,13 +43,6 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
         t_sample_tf = tf.convert_to_tensor([[t_sample]], dtype=tf.float32)
         v_target_tf = tf.convert_to_tensor([[v_target]], dtype=tf.float32)
 
-        with tf.GradientTape() as tape:
-            # 计算偏导数和预测值
-            dV_dx, dV_dt, d2V_dx2, v_pred = compute_derivatives(model, x_sample_tf, t_sample_tf)
-
-            # 使用模型的输出 v_pred 计算损失
-            loss = tf.reduce_mean(tf.square(v_pred - v_target_tf))
-
         # 检查是否生成了梯度
         grads = tape.gradient(loss, model.trainable_variables)
         if grads is None or all(g is None for g in grads):
@@ -62,6 +55,14 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
         # 更新标签
         v_target_new = dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx
         v_target = v_target_new.numpy()[0][0]  # 更新标签
+
+          with tf.GradientTape() as tape:
+            # 计算偏导数和预测值
+            dV_dx, dV_dt, d2V_dx2, v_pred = compute_derivatives(model, x_sample_tf, t_sample_tf)
+            v_target_tf = dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx
+
+            # 使用模型的输出 v_pred 计算损失
+            loss = tf.reduce_mean(tf.square(v_pred -v_target_tf))
        
         # 检查收敛条件
         if np.abs(v_pred.numpy() - v_target_new) < tol:
