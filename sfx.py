@@ -19,7 +19,7 @@ class MLP(Model):
         return self.output_layer(hidden)
 
 # 训练单个点
-def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001, tol=0.001, max_iter=10000):
+def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.01, tol=0.001, max_iter=10000):
     optimizer = optimizers.Adam(learning_rate)
     
     # 转换输入为张量形式
