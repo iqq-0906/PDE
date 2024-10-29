@@ -1,8 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model, layers, optimizers
-import pandas
-
+import pandas as pd
 # 定义神经网络模型
 class PINN(Model):
     def __init__(self):
