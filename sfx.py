@@ -39,17 +39,21 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
 
         # 计算新的目标值
         dV_dx, dV_dt, d2V_dx2 = compute_derivatives(model, x_sample_tf, t_sample_tf)  # 计算导数
-        v_target_new = (dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx)/ 0.025610
+        v_target_new = (dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx) / 0.025610
 
         # 更新标签为新的目标值
         v_target = v_target_new.numpy().item()  # 更新为当前的标量目标值
 
         # 检查收敛条件
-        if np.abs(v_pred.numpy().item() - v_target) < tol:  # 使用 .item() 将 v_pred 转换为标量
-            print(f'Converged at x={x_sample}, t={t_sample} after {iteration} iterations')
-            return v_pred.numpy().item()
+        if np.abs(v_pred.numpy().item() - v_target) < tol:
+            # 如果收敛并且预测值为正数，则返回预测值；否则重新训练
+            if v_pred.numpy().item() >= 0:
+                print(f'Converged at x={x_sample}, t={t_sample} after {iteration} iterations with value {v_pred.numpy().item()}')
+                return v_pred.numpy().item()
+            else:
+                print(f"Converged value {v_pred.numpy().item()} is less than 0. Retraining...")
 
-    return v_pred.numpy().item()
+    return max(v_pred.numpy().item(), 0)  # 返回正值或0（确保非负）
 
 # 计算偏导数
 def compute_derivatives(model, x, t):
