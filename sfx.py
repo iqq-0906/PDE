@@ -19,7 +19,7 @@ class MLP(Model):
         return self.output_layer(hidden)
 
 # 计算偏导数并进行迭代
-def iterate_single_point(model, x_sample, t_sample, v_initial, tol=0.001, max_iter=10000):
+def iterate_single_point(model, x_sample, t_sample, v_initial, tol=0.000001, max_iter=10000):
     x_sample_tf = tf.convert_to_tensor([[x_sample]], dtype=tf.float32)
     t_sample_tf = tf.convert_to_tensor([[t_sample]], dtype=tf.float32)
     
