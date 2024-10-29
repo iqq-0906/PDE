@@ -94,5 +94,5 @@ data = pd.read_csv('data.csv')
 x_test = data.iloc[:, 1].values  # 确保这是一个一维数组
 t_test = data.iloc[:, 2].values / 365
 
-# 训练模型
-v_converged = train_model(model, x_test, t_test, v_ta
+v_converged = train_model(model, x_test, t_test, v_target)
+print("Converged values:", v_converged)
