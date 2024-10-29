@@ -39,7 +39,7 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
 
         # 计算新的目标值
         dV_dx, dV_dt, d2V_dx2 = compute_derivatives(model, x_sample_tf, t_sample_tf)  # 计算导数
-        v_target_new = dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx
+        v_target_new = (dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx)/ 0.025610
 
         # 更新标签为新的目标值
         v_target = v_target_new.numpy().item()  # 更新为当前的标量目标值
