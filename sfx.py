@@ -48,7 +48,7 @@ def train_single_point(model, x_sample, t_sample, v_target, learning_rate=0.001,
             # 计算偏导数和预测值
             dV_dx, dV_dt, d2V_dx2, v_pred = compute_derivatives(model, x_sample_tf, t_sample_tf)
             # 更新 v_target 计算值
-            v_target_new = dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx
+            v_target_new = (dV_dt + 0.5 * (0.165856529)**2 * (x_sample_tf**2) * d2V_dx2 + 0.025610 * x_sample_tf * dV_dx)/ 0.025610
 
             # 计算损失
             loss = tf.reduce_mean(tf.square(v_pred - v_target_tf))
