@@ -388,6 +388,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
         0.0723, 0.0590, 0.0523, 0.0532, 0.0415, 0.0513, 0.0815, 0.0973, 0.0992,
         0.0994, 0.0972, 0.1202, 0.1344, 0.1326, 0.1074, 0.1177, 0.1064, 0.1183,
         0.1198, 0.1184, 0.1384, 0.1312, 0.1276, 0.1269, 0.1375, 0.1384, 0.1284]
+    
 
 
 
@@ -398,6 +399,12 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     xl=torch.tensor(xl)
     tl=torch.tensor(tl)
     outputs_bt=torch.tensor(outputs_bt)
+    x_lc=np.vstack(x_i,xl])
+    t_lc=np.vstack(t_i,tl])
+    x_lb=np.vstack(x_b,xl])
+    t_lb=np.vstack(t_b,tl])
+    outputs_tc=np.vstack(outputs_i,outputs_bt)
+    outputs_tb=np.vstack(outputs_b,outputs_bt)
 
 
 
@@ -407,7 +414,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 
 
 
-    return u_1,u_2,u_s1,u_s2,x_i,t_i,outputs_i,x_b,t_b,outputs_b,xl,tl,outputs_bt,\
+    return u_1,u_2,u_s1,u_s2,x_i,t_i,outputs_i,x_b,t_b,outputs_b,x_lc,t_lc,outputs_tc,x_lb,t_lb,outputs_tb,\
            s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value
 
 
@@ -415,8 +422,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =3000 # number of output sensors, 100 for each side
-Q =2000  # number of collocation points for each input sample
+P =120 # number of output sensors, 100 for each side
+Q =120  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -460,22 +467,32 @@ batch_size2= 100
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
-xl= xl.reshape(-1,).to(device)
-tl= tl.reshape(-1,).to(device)
-outputs_bt= outputs_bt.reshape(-1,).to(device)
-xl=xl.float()
-tl=tl.float()
-outputs_bt=outputs_bt.float()
+x_lc,t_lc,outputs_tc,x_lb,t_lb,outputs_tb,
+x_lc= x_lc.reshape(-1,).to(device)
+t_lc= t_lc.reshape(-1,).to(device)
+outputs_tc= outputs_tc.reshape(-1,).to(device)
+x_lc=x_lc.float()
+t_lc=t_lc.float()
+outputs_tc=outputs_tc.float()
 batch_size3= 16
-dataset3 = TensorDataset(xl,tl,outputs_bt)
-dataloader3 = DataLoader(dataset3, batch_size=batch_size1, shuffle=True)
+dataset3 = TensorDataset(x_lc,t_lc,outputs_tc)
+dataloader3 = DataLoader(dataset3, batch_size=batch_size3, shuffle=True)
+x_lb= x_lb.reshape(-1,).to(device)
+t_lb= t_lb.reshape(-1,).to(device)
+outputs_tc= outputs_tc.reshape(-1,).to(device)
+x_lb=x_lb.float()
+t_lb=t_lb.float()
+outputs_tb=outputs_tb.float()
+batch_size3= 16
+dataset4= TensorDataset(x_lb,t_lb,outputs_tb)
+dataloader3 = DataLoader(dataset4, batch_size=batch_size3, shuffle=True)
 
 
 
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([1000,10,1], base_activation=nn.Identity)
+model4 = KAN([30,10,1], base_activation=nn.Identity)
 model5 = KAN([2,10,10,10,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
