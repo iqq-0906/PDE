@@ -123,7 +123,7 @@ class PI_DeepONet(nn.Module):
         s_xx =(hessian(self.operator_net,argnums=4)(u1,u2,u_s1,u_s2,x,t).sum(dim=0)).sum(dim=0).to(device)
         s_t =jacrev(self.operator_net,argnums=5)(u1,u2,u_s1,u_s2,x,t).sum(dim=0).to(device)
         member1 = torch.tensor(0.5, device='cuda')
-        member2 = torch.tensor(0.01, device='cuda')
+        member2 = torch.tensor(0.3, device='cuda')
         member3 = torch.tensor(0.025630, device='cuda')
         res =s_t-(member1)*(member2**2)*(x**2)*s_xx-member3*x*s_x+member3*s
         return res
@@ -176,7 +176,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =100*pde_loss+50*bc_loss
+                    loss =pde_loss+bc_loss
                     loss.backward()
                     return loss
 
@@ -206,7 +206,7 @@ class PI_DeepONet(nn.Module):
 def f1(x,t,k):
   return np.where(t==0,np.maximum(x-2.411,0),0)
 def f2(x,k):
-  return np.where(x ==7.233, x-2.411, 10)
+  return np.where(x ==4.822, x-2.411, 10)
 def f3(x):
   return np.where(x==0,0,0)
 
@@ -256,8 +256,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # print(t_bc4.shape)
     np_K=K*(np.ones((P // 3, 1)))
 
-    x_bc1 = random.uniform(subkeys[2], shape=(P // 3, 1), minval=0, maxval=7.233)
-    x_bc2 = 7.233* (np.ones((P // 3, 1)))
+    x_bc1 = random.uniform(subkeys[2], shape=(P // 3, 1), minval=0, maxval=4.822)
+    x_bc2 = 4.822* (np.ones((P // 3, 1)))
     x_bc3 = np.zeros((P // 3, 1))
     # x_bc4= random.uniform(subkeys[7], shape=(P // 3, 1), minval=0, maxval=3* K)
     x_bcs = np.vstack([x_bc1, x_bc2,x_bc3])
