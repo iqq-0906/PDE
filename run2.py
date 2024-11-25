@@ -388,14 +388,14 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
         0.0723, 0.0590, 0.0523, 0.0532, 0.0415, 0.0513, 0.0815, 0.0973, 0.0992,
         0.0994, 0.0972, 0.1202, 0.1344, 0.1326, 0.1074, 0.1177, 0.1064, 0.1183,
         0.1198, 0.1184, 0.1384, 0.1312, 0.1276, 0.1269, 0.1375, 0.1384, 0.1284]
-    xl=np.array(xl).reshape(72,1)
-    tl=np.array(tl).reshape(72,1)
+    xl=np.array(x_l).reshape(72,1)
+    tl=np.array(t_l).reshape(72,1)
     outputs_bt=np.array(outputs_bt).reshape(72,1)
     
     x_lc=np.vstack([x_bc1, x_bc2,x_bc3,xl])
     t_lc=np.vstack([t_bc1, t_bc2,t_bc3,tl])
-    x_lb=np.vstack([x_bb,xl])
-    t_lb=np.vstack([t_bb,tl])
+    x_lb=np.vstack([x_bb,x_lc])
+    t_lb=np.vstack([t_bb,t_lc])
     outputs_tc=np.vstack([s_bc1, s_bc2,s_bc3,outputs_bt])
     outputs_tb=np.vstack([outputs_b,outputs_bt])
 
