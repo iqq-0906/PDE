@@ -302,10 +302,10 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # print(s_train.shape)
     outputs_i= torch.tensor(s_train)
 
-    x_b = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
-    t_b = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=1)
-    x_b = min_max_normalize(x_b,x_bcs_min_value, x_bcs_max_value)
-    t_b= min_max_normalize(t_b,t_bcs_min_value,t_bcs_max_value)
+    x_bb = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
+    t_bb = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=1)
+    x_b = min_max_normalize(x_bb,x_bcs_min_value, x_bcs_max_value)
+    t_b= min_max_normalize(t_bb,t_bcs_min_value,t_bcs_max_value)
     x_b = x_b.__array__()
     x_b= torch.tensor(x_b)
     t_b = t_b.__array__()
@@ -388,27 +388,33 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
         0.0723, 0.0590, 0.0523, 0.0532, 0.0415, 0.0513, 0.0815, 0.0973, 0.0992,
         0.0994, 0.0972, 0.1202, 0.1344, 0.1326, 0.1074, 0.1177, 0.1064, 0.1183,
         0.1198, 0.1184, 0.1384, 0.1312, 0.1276, 0.1269, 0.1375, 0.1384, 0.1284]
+    xl=np.array(xl).reshape(72,1)
+    tl=np.array(tl).reshape(72,1)
+    outputs_bt=np.array(outputs_bt).reshape(72,1)
     
-
-
-
-
-    xl= min_max_normalize(x_l, x_bcs_min_value, x_bcs_max_value)
-    tl= min_max_normalize(t_l, t_bcs_min_value, t_bcs_max_value)
-    outputs_bt= min_max_normalize(outputs_bt, s_bcs_min_value, s_bcs_max_value)
-    xl=torch.tensor(xl)
-    tl=torch.tensor(tl)
-    outputs_bt=torch.tensor(outputs_bt)
-    xl=xl.reshape(72,)
-    tl=tl.reshape(72,)
-    outputs_bt=outputs_bt.reshape(72,)
-
-    x_lc=np.vstack([x_i,xl])
-    t_lc=np.vstack([t_i,tl])
-    x_lb=np.vstack([x_b,xl])
-    t_lb=np.vstack([t_b,tl])
-    outputs_tc=np.vstack([outputs_i,outputs_bt])
+    x_lc=np.vstack([x_bc1, x_bc2,x_bc3,xl])
+    t_lc=np.vstack([t_bc1, t_bc2,t_bc3,tl])
+    x_lb=np.vstack([x_bb,xl])
+    t_lb=np.vstack([t_bb,tl])
+    outputs_tc=np.vstack([s_bc1, s_bc2,s_bc3,outputs_bt])
     outputs_tb=np.vstack([outputs_b,outputs_bt])
+
+
+
+
+    x_lc= min_max_normalize(x_lc, x_bcs_min_value, x_bcs_max_value)
+    t_lc= min_max_normalize(t_lc, t_bcs_min_value, t_bcs_max_value)
+    x_lb= min_max_normalize(x_lb, x_bcs_min_value, x_bcs_max_value)
+    t_lb= min_max_normalize(t_lb, t_bcs_min_value, t_bcs_max_value)
+    outputs_tc= min_max_normalize(outputs_tc, s_bcs_min_value, s_bcs_max_value)
+    outputs_tb= min_max_normalize(outputs_tb, s_bcs_min_value, s_bcs_max_value)
+    x_lc=torch.tensor(x_lc)
+    t_lc=torch.tensor(t_lc)
+    x_lbtorch.tensor(x_lb)
+    t_lb=torch.tensor(t_lb)
+    outputs_tc=torch.tensor(outputs_tc)
+    outputs_tb=torch.tensor(outputs_tb)
+
 
 
 
