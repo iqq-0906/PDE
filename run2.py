@@ -160,7 +160,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.001,history_size=10, line_search_fn="strong_wolfe",
+        self.optimizer = torch.optim.LBFGS(params, lr=0.01,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
         pbar = tqdm(range(100), desc='description')
@@ -176,7 +176,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =pde_loss+bc_loss
+                    loss =100*pde_loss+50*bc_loss
                     loss.backward()
                     return loss
 
@@ -390,6 +390,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
         0.1198, 0.1184, 0.1384, 0.1312, 0.1276, 0.1269, 0.1375, 0.1384, 0.1284]
 
 
+
+
     xl= min_max_normalize(x_l, x_bcs_min_value, x_bcs_max_value)
     tl= min_max_normalize(t_l, t_bcs_min_value, t_bcs_max_value)
     outputs_bt= min_max_normalize(outputs_bt, s_bcs_min_value, s_bcs_max_value)
@@ -474,7 +476,7 @@ model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([1000,10,1], base_activation=nn.Identity)
-model5 = KAN([2,10,10,1], base_activation=nn.Identity)
+model5 = KAN([2,10,10,10,,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
