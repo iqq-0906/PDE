@@ -379,7 +379,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
           89, 85, 84, 83, 82, 79, 78, 77, 76, 75, 72, 71, 70, 69, 68,
           65, 64, 63, 62, 61, 58, 57, 56, 55, 54, 51, 50, 49, 48, 37,
           36, 35, 34, 33, 30, 29, 28, 27, 26, 23, 22, 21, 20, 19, 16, 15, 14, 13]
-    outputs_bl=[0.1320, 0.1197, 0.1215, 0.1142, 0.1175, 0.1108, 0.0981, 0.0770, 0.0760,
+    outputs_bt=[0.1320, 0.1197, 0.1215, 0.1142, 0.1175, 0.1108, 0.0981, 0.0770, 0.0760,
         0.0737, 0.0699, 0.0771, 0.0820, 0.0709, 0.0655, 0.0570, 0.0605, 0.0646,
         0.0538, 0.0666, 0.0696, 0.0702, 0.0664, 0.0666, 0.0877, 0.0896, 0.0753,
         0.0781, 0.0683, 0.0645, 0.0569, 0.0545, 0.0520, 0.0515, 0.0491, 0.0507,
@@ -390,10 +390,10 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 
     xl= min_max_normalize(x_l, x_bcs_min_value, x_bcs_max_value)
     tl= min_max_normalize(t_l, t_bcs_min_value, t_bcs_max_value)
-    outputs_bl= min_max_normalize(t_l, s_bcs_min_value, s_bcs_max_value)
+    outputs_bt= min_max_normalize(outputs_bt, s_bcs_min_value, s_bcs_max_value)
     xl=torch.tensor(xl)
     tl=torch.tensor(tl)
-    outputs_b1=torch.tensor(outputs_bl)
+    outputs_bt=torch.tensor(outputs_bt)
 
 
 
@@ -403,7 +403,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 
 
 
-    return u_1,u_2,u_s1,u_s2,x_i,t_i,outputs_i,x_b,t_b,outputs_b,xl,tl,outputs_b1,\
+    return u_1,u_2,u_s1,u_s2,x_i,t_i,outputs_i,x_b,t_b,outputs_b,xl,tl,outputs_bt,\
            s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value
 
 
@@ -417,7 +417,7 @@ M = 5000
 r =0.025610
 v=0.165856529
 T=1
-u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,xl,tl,outputs_b1,\
+u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,xl,tl,outputs_bl,\
          s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value\
             =generate_one_training_data(key,P,Q,K,M,r,v,T)
 u_1=u_1.float().to(device)
@@ -458,12 +458,12 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
 xl= xl.reshape(-1,).to(device)
 tl= tl.reshape(-1,).to(device)
+outputs_bt= outputs_bt.reshape(-1,).to(device)
 xl=xl.float()
 tl=tl.float()
-outputs_bl=outputs_bl.float()
+outputs_bt=outputs_bt.float()
 batch_size3= 10
-ooutputs_b1= outputs_b1.reshape(-1,).to(device)
-dataset3 = TensorDataset(xl,tl,outputs_b1)
+dataset3 = TensorDataset(xl,tl,outputs_bt)
 dataloader3 = DataLoader(dataset3, batch_size=batch_size1, shuffle=True)
 
 
