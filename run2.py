@@ -399,6 +399,10 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     xl=torch.tensor(xl)
     tl=torch.tensor(tl)
     outputs_bt=torch.tensor(outputs_bt)
+    xl=xl.reshape(72,)
+    tl=tl.reshape(72,)
+    outputs_bt=outputs_bt.reshape(72,)
+
     x_lc=np.vstack([x_i,xl])
     t_lc=np.vstack([t_i,tl])
     x_lb=np.vstack([x_b,xl])
