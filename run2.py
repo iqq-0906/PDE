@@ -410,7 +410,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     outputs_tb= min_max_normalize(outputs_tb, s_bcs_min_value, s_bcs_max_value)
     x_lc=torch.tensor(x_lc)
     t_lc=torch.tensor(t_lc)
-    x_lbtorch.tensor(x_lb)
+    x_lb=torch.tensor(x_lb)
     t_lb=torch.tensor(t_lb)
     outputs_tc=torch.tensor(outputs_tc)
     outputs_tb=torch.tensor(outputs_tb)
