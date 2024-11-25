@@ -403,8 +403,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     t_lc=np.vstack([t_i,tl])
     x_lb=np.vstack([x_b,xl])
     t_lb=np.vstack([t_b,tl])
-    outputs_tc=np.vstack([outputs_i,outputs_bt)
-    outputs_tb=np.vstack([outputs_b,outputs_bt)
+    outputs_tc=np.vstack([outputs_i,outputs_bt])
+    outputs_tb=np.vstack([outputs_b,outputs_bt])
 
 
 
