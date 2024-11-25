@@ -476,7 +476,7 @@ model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([1000,10,1], base_activation=nn.Identity)
-model5 = KAN([2,10,10,10,,1], base_activation=nn.Identity)
+model5 = KAN([2,10,10,10,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
