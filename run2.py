@@ -268,8 +268,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     x_i = torch.tensor(x_bcs)
 
     t_bc1 = np.zeros((P // 3, 1))
-    t_bc2 = random.uniform(subkeys[3], shape=(P // 3, 1), minval=0, maxval=365)
-    t_bc3 = random.uniform(subkeys[4], shape=(P // 3, 1), minval=0, maxval=365)
+    t_bc2 = random.uniform(subkeys[3], shape=(P // 3, 1), minval=0, maxval=1)
+    t_bc3 = random.uniform(subkeys[4], shape=(P // 3, 1), minval=0, maxval=1)
     # t_bc4 = random.uniform(subkeys[8], shape=(P // 3, 1), minval=0, maxval=365)
     t_bcs = np.vstack([t_bc1, t_bc2,t_bc3])
     t_bcs_min_value = np.min(t_bcs)
@@ -303,7 +303,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     outputs_i= torch.tensor(s_train)
 
     x_b = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
-    t_b = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=365)
+    t_b = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=1)
     x_b = min_max_normalize(x_b,x_bcs_min_value, x_bcs_max_value)
     t_b= min_max_normalize(t_b,t_bcs_min_value,t_bcs_max_value)
     x_b = x_b.__array__()
@@ -379,6 +379,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
           89, 85, 84, 83, 82, 79, 78, 77, 76, 75, 72, 71, 70, 69, 68,
           65, 64, 63, 62, 61, 58, 57, 56, 55, 54, 51, 50, 49, 48, 37,
           36, 35, 34, 33, 30, 29, 28, 27, 26, 23, 22, 21, 20, 19, 16, 15, 14, 13]
+    t_l=t_l/365
     outputs_bt=[0.1320, 0.1197, 0.1215, 0.1142, 0.1175, 0.1108, 0.0981, 0.0770, 0.0760,
         0.0737, 0.0699, 0.0771, 0.0820, 0.0709, 0.0655, 0.0570, 0.0605, 0.0646,
         0.0538, 0.0666, 0.0696, 0.0702, 0.0664, 0.0666, 0.0877, 0.0896, 0.0753,
@@ -485,7 +486,7 @@ model.to(device)
 model.train(u_1,u_2,u_s1,u_s2,dataloader3,dataloader3)
 data=pd.read_csv('data.csv')
 x_test=data.iloc[:,1]
-t_test=data.iloc[:,2]
+t_test=data.iloc[:,2]/365
 x_test=torch.tensor(x_test).float()
 x_test=x_test.unsqueeze(1).to(device)
 t_test=torch.tensor(t_test).float()
