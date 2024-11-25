@@ -483,7 +483,7 @@ outputs_tc= outputs_tc.reshape(-1,)
 x_lc=x_lc.float().to(device)
 t_lc=t_lc.float().to(device)
 outputs_tc=outputs_tc.float().to(device)
-batch_size3= 16
+batch_size3= 32
 dataset3 = TensorDataset(x_lc,t_lc,outputs_tc)
 dataloader3 = DataLoader(dataset3, batch_size=batch_size3, shuffle=True)
 x_lb= x_lb.reshape(-1,)
@@ -492,7 +492,7 @@ outputs_tb= outputs_tb.reshape(-1,)
 x_lb=x_lb.float().to(device)
 t_lb=t_lb.float().to(device)
 outputs_tb=outputs_tb.float().to(device)
-batch_size3= 16
+batch_size3= 32
 dataset4= TensorDataset(x_lb,t_lb,outputs_tb)
 dataloader4 = DataLoader(dataset4, batch_size=batch_size3, shuffle=True)
 
