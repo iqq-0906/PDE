@@ -73,31 +73,18 @@ device = torch.device("cuda")
 
 
 class PI_DeepONet(nn.Module):
-    def __init__(self, model1, model2, model4, model5):
+    def __init__(self,model1,model2,model4,model5):
         super(PI_DeepONet, self).__init__()
         # Network initialization and evaluation functions
         self.model1 = model1
         self.model2 = model2
+        # self.model3 = model3
         self.model4 = model4
         self.model5 = model5
-        
-        # 权重初始化
-        self.init_weights()
 
-        self.bc_losses = []
-        self.pde_losses = []
 
-    def init_weights(self):
-        for model in [self.model1, self.model2, self.model4, self.model5]:
-            for layer in model.children():
-                if isinstance(layer, nn.Linear):
-                    # 使用Xavier均匀初始化
-                    nn.init.xavier_uniform_(layer.weight)
-                    layer.bias.data.fill_(0.01)  # 设置偏置为0.01
-                elif isinstance(layer, nn.Conv2d):
-                    # 使用Kaiming（He）初始化
-                    nn.init.kaiming_uniform_(layer.weight, nonlinearity='relu')
-                    layer.bias.data.fill_(0.01)  # 设置偏置为0.01
+        self. bc_losses = []
+        self. pde_losses = []
     def reshape(self,X):
         reshaped_X = X.reshape(-1,)
         return reshaped_X
@@ -175,13 +162,13 @@ class PI_DeepONet(nn.Module):
 
         self.optimizer = torch.optim.LBFGS(params, lr=0.01,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
-        # self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.00001)
     
-        pbar = tqdm(range(20), desc='description')
+        pbar = tqdm(range(15), desc='description')
     
        
         for _ in pbar:
-            self.optimizer.zero_grad()
+           
+            
             for (x_i, t_i,outputs_i),(x_b, t_b, outputs_b) in zip(dataloader1, dataloader2):
                 def closure():
                     global pde_loss, bc_loss
@@ -189,18 +176,9 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =0.01*pde_loss+10*bc_loss
+                    loss =0.1*pde_loss+bc_loss
                     loss.backward()
                     return loss
-
-                
-                # bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
-                # pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
-                # loss =0.001*pde_loss+1000*bc_loss
-
-                # # 反向传播和优
-                # loss.backward()
-                # self.optimizer.step()
 
             # # if _ % 5 == 0 and _ < 50:
             #     model1.update_grid_from_samples(u1)
@@ -285,7 +263,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     x_bcs = np.vstack([x_bc1, x_bc2,x_bc3])
     x_bcs_min_value = np.min(x_bcs)
     x_bcs_max_value = np.max(x_bcs)
-    # x_bcs=min_max_normalize(x_bcs, x_bcs_min_value, x_bcs_max_value)
+    x_bcs=min_max_normalize(x_bcs, x_bcs_min_value, x_bcs_max_value)
     x_bcs= x_bcs.__array__()
     x_i = torch.tensor(x_bcs)
 
@@ -296,7 +274,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     t_bcs = np.vstack([t_bc1, t_bc2,t_bc3])
     t_bcs_min_value = np.min(t_bcs)
     t_bcs_max_value = np.max(t_bcs)
-    # t_bcs= min_max_normalize(t_bcs, t_bcs_min_value,t_bcs_max_value)
+    t_bcs= min_max_normalize(t_bcs, t_bcs_min_value,t_bcs_max_value)
     # t_bcs = np.vstack([t_bcs,t_bc4])
     t_bcs = t_bcs.__array__()
     t_i = torch.tensor(t_bcs)
@@ -315,7 +293,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_train= np.vstack([s_bc1, s_bc2,s_bc3])
     s_bcs_min_value = np.min(s_train)
     s_bcs_max_value = np.max(s_train)
-    # s_train= min_max_normalize(s_train,s_bcs_min_value, s_bcs_max_value)
+    s_train= min_max_normalize(s_train,s_bcs_min_value, s_bcs_max_value)
     s_train= s_train.__array__()
     print(s_bc1.shape)
     # print(s_bc2.shape)
@@ -326,8 +304,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 
     x_b = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
     t_b = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=365)
-    # x_b = min_max_normalize(x_b,x_bcs_min_value, x_bcs_max_value)
-    # t_b= min_max_normalize(t_b,t_bcs_min_value,t_bcs_max_value)
+    x_b = min_max_normalize(x_b,x_bcs_min_value, x_bcs_max_value)
+    t_b= min_max_normalize(t_b,t_bcs_min_value,t_bcs_max_value)
     x_b = x_b.__array__()
     x_b= torch.tensor(x_b)
     t_b = t_b.__array__()
@@ -339,23 +317,14 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_bc4 =np.array(list(s_bc4))
     s_bc4 =s_bc4.reshape(-1,1)
     
-    # x_bc11=min_max_normalize(x_bc4, x_bcs_min_value, x_bcs_max_value)
-    # x_bc11=x_bc11.__array__()
-    # x_bc11= torch.tensor(x_bc11)
-    # t_bc11 = min_max_normalize(t_bc1, t_bcs_min_value, t_bcs_max_value)
-    # t_bc11 = t_bc11.__array__()
-    # t_bc11 = torch.tensor(t_bc11)
-    # s_bc11 = min_max_normalize(s_bc4, s_bcs_min_value, s_bcs_max_value)
-    # s_bc11= s_bc11.__array__()
-    # s_bc11 = torch.tensor(s_bc11)
-    # u_1= torch.cat((x_bc11,t_bc11,s_bc11), dim=1)  # shape: (4, 2)
-    # u_s1=s_bc11
-   
-    x_bc11=x_bc4.__array__()
+    x_bc11=min_max_normalize(x_bc4, x_bcs_min_value, x_bcs_max_value)
+    x_bc11=x_bc11.__array__()
     x_bc11= torch.tensor(x_bc11)
-    t_bc11=t_bc1.__array__()
+    t_bc11 = min_max_normalize(t_bc1, t_bcs_min_value, t_bcs_max_value)
+    t_bc11 = t_bc11.__array__()
     t_bc11 = torch.tensor(t_bc11)
-    s_bc11=s_bc4.__array__()
+    s_bc11 = min_max_normalize(s_bc4, s_bcs_min_value, s_bcs_max_value)
+    s_bc11= s_bc11.__array__()
     s_bc11 = torch.tensor(s_bc11)
     u_1= torch.cat((x_bc11,t_bc11,s_bc11), dim=1)  # shape: (4, 2)
     u_s1=s_bc11
@@ -364,26 +333,17 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     s_bc5 = np.array(list(s_bc5))
     s_bc5 = s_bc5.reshape(-1, 1)
 
-    x_bc22=x_bc2.__array__()
+    x_bc22 = min_max_normalize(x_bc2, x_bcs_min_value, x_bcs_max_value)
+    x_bc22 = x_bc22.__array__()
     x_bc22 = torch.tensor(x_bc22)
-    t_bc22=t_bc4.__array__()
+    t_bc22 = min_max_normalize(t_bc4, t_bcs_min_value, t_bcs_max_value)
+    t_bc22 = t_bc22.__array__()
     t_bc22 = torch.tensor(t_bc22)
-    s_bc22=s_bc5.__array__()
+    s_bc22 = min_max_normalize(s_bc5, s_bcs_min_value, s_bcs_max_value)
+    s_bc22 = s_bc22.__array__()
     s_bc22 = torch.tensor(s_bc22)
     u_2 = torch.cat((x_bc22, t_bc22,s_bc22), dim=1)
     u_s2=s_bc22
-
-    # x_bc22 = min_max_normalize(x_bc2, x_bcs_min_value, x_bcs_max_value)
-    # x_bc22 = x_bc22.__array__()
-    # x_bc22 = torch.tensor(x_bc22)
-    # t_bc22 = min_max_normalize(t_bc4, t_bcs_min_value, t_bcs_max_value)
-    # t_bc22 = t_bc22.__array__()
-    # t_bc22 = torch.tensor(t_bc22)
-    # s_bc22 = min_max_normalize(s_bc5, s_bcs_min_value, s_bcs_max_value)
-    # s_bc22 = s_bc22.__array__()
-    # s_bc22 = torch.tensor(s_bc22)
-    # u_2 = torch.cat((x_bc22, t_bc22,s_bc22), dim=1)
-    # u_s2=s_bc22
 
 
     # x_bc33 = min_max_normalize(x_bc3, x_bcs_min_value, x_bcs_max_value)
@@ -407,6 +367,35 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # s_bc4= s_bc4.__array__()
     # s_bc4 = torch.tensor(s_bc4)
 
+    x_l=[2.426, 2.403, 2.407, 2.393, 2.4, 2.388, 2.362, 2.315, 2.313, 2.308, 2.3,
+          2.318, 2.33, 2.304, 2.291, 2.27, 2.28, 2.291, 2.263, 2.297, 2.306, 2.308,
+          2.299, 2.3, 2.35, 2.356, 2.324, 2.331, 2.308, 2.3, 2.281, 2.275, 2.269, 
+          2.268, 2.263, 2.268, 2.275, 2.225, 2.259, 2.274, 2.255, 2.269, 2.296,
+          2.34, 2.35, 2.33, 2.298, 2.281, 2.284, 2.253, 2.281, 2.355, 2.389, 2.398,
+          2.399, 2.395, 2.44, 2.466, 2.464, 2.418, 2.438, 2.417, 2.44, 2.444, 2.442, 
+          2.478, 2.466, 2.46, 2.46, 2.479, 2.481, 2.464]
+    t_l=[121, 120, 119, 118, 117, 114, 113, 112, 111, 110, 107, 
+          106, 105, 104, 103, 100, 99, 98, 97, 96, 93, 92, 91, 90,
+          89, 85, 84, 83, 82, 79, 78, 77, 76, 75, 72, 71, 70, 69, 68,
+          65, 64, 63, 62, 61, 58, 57, 56, 55, 54, 51, 50, 49, 48, 37,
+          36, 35, 34, 33, 30, 29, 28, 27, 26, 23, 22, 21, 20, 19, 16, 15, 14, 13]
+    outputs_bl=[0.1320, 0.1197, 0.1215, 0.1142, 0.1175, 0.1108, 0.0981, 0.0770, 0.0760,
+        0.0737, 0.0699, 0.0771, 0.0820, 0.0709, 0.0655, 0.0570, 0.0605, 0.0646,
+        0.0538, 0.0666, 0.0696, 0.0702, 0.0664, 0.0666, 0.0877, 0.0896, 0.0753,
+        0.0781, 0.0683, 0.0645, 0.0569, 0.0545, 0.0520, 0.0515, 0.0491, 0.0507,
+        0.0531, 0.0357, 0.0469, 0.0517, 0.0447, 0.0495, 0.0595, 0.0774, 0.0812,
+        0.0723, 0.0590, 0.0523, 0.0532, 0.0415, 0.0513, 0.0815, 0.0973, 0.0992,
+        0.0994, 0.0972, 0.1202, 0.1344, 0.1326, 0.1074, 0.1177, 0.1064, 0.1183,
+        0.1198, 0.1184, 0.1384, 0.1312, 0.1276, 0.1269, 0.1375, 0.1384, 0.1284]
+
+    xl= min_max_normalize(x_l, x_bcs_min_value, x_bcs_max_value)
+    tl= min_max_normalize(t_l, t_bcs_min_value, t_bcs_max_value)
+    outputs_bl= min_max_normalize(t_l, s_bcs_min_value, s_bcs_max_value)
+    xl=torch.tensor(xl)
+    tl=torch.tensor(tl)
+    outputs_b1=torch.tensor(outputs_bl)
+
+
 
     
 
@@ -414,7 +403,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 
 
 
-    return u_1,u_2,u_s1,u_s2,x_i,t_i,outputs_i,x_b,t_b,outputs_b,\
+    return u_1,u_2,u_s1,u_s2,x_i,t_i,outputs_i,x_b,t_b,outputs_b,xl,tl,outputs_b1,\
            s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value
 
 
@@ -428,7 +417,7 @@ M = 5000
 r =0.025610
 v=0.165856529
 T=1
-u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,\
+u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,xl,tl,outputs_b1,\
          s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value\
             =generate_one_training_data(key,P,Q,K,M,r,v,T)
 u_1=u_1.float().to(device)
@@ -467,6 +456,12 @@ batch_size2= 100
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
+xl= xl.reshape(-1,).to(device)
+tl= tl.reshape(-1,).to(device)
+batch_size3= 10
+outputs_bl = outputs_bl.reshape(-1,).to(device)
+dataset3 = TensorDataset(xl,tl,outputs_bl)
+dataloader3 = DataLoader(dataset3, batch_size=batch_size1, shuffle=True)
 
 
 
@@ -474,7 +469,7 @@ model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([1000,2,1], base_activation=nn.Identity)
-model5 = KAN([2,2,1], base_activation=nn.Identity)
+model5 = KAN([2,2,2,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
@@ -483,7 +478,7 @@ model5 = KAN([2,2,1], base_activation=nn.Identity)
 
 model= PI_DeepONet(model1,model2,model4,model5)
 model.to(device)
-model.train(u_1,u_2,u_s1,u_s2,dataloader1,dataloader2)
+model.train(u_1,u_2,u_s1,u_s2,dataloader3,dataloader3)
 data=pd.read_csv('data.csv')
 x_test=data.iloc[:,1]
 t_test=data.iloc[:,2]
@@ -492,11 +487,11 @@ x_test=x_test.unsqueeze(1).to(device)
 t_test=torch.tensor(t_test).float()
 t_test=t_test.unsqueeze(1).to(device)
 
-# x_test=min_max_normalize(x_test,x_bcs_min_value, x_bcs_max_value)
-# t_test=min_max_normalize(t_test,t_bcs_min_value,t_bcs_max_value)
+x_test=min_max_normalize(x_test,x_bcs_min_value, x_bcs_max_value)
+t_test=min_max_normalize(t_test,t_bcs_min_value,t_bcs_max_value)
 
 s_pred = model.operator_net(u_1,u_2,u_s1, u_s2, x_test,t_test)
-# s_pred=s_pred*s_bcs_max_value
+s_pred=s_pred*s_bcs_max_value
 s_true=data.iloc[:,3]
 s_true=torch.tensor(s_true).to(device)
 error_s =(s_pred- s_true)/s_true
@@ -519,5 +514,3 @@ print(f"MAPE: {mape_val.item()}%")
 end_time=time.time()
 rap_time=end_time-start_time
 print('run-time:{}'.format(rap_time))
-
-
