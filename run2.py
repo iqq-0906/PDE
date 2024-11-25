@@ -438,7 +438,7 @@ M = 5000
 r =0.025610
 v=0.165856529
 T=1
-u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,xl,tl,outputs_bt,\
+u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b,x_lc,t_lc,outputs_tc,x_lb,t_lb,outputs_tb\
          s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value\
             =generate_one_training_data(key,P,Q,K,M,r,v,T)
 u_1=u_1.float().to(device)
@@ -477,7 +477,6 @@ batch_size2= 100
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
-x_lc,t_lc,outputs_tc,x_lb,t_lb,outputs_tb,
 x_lc= x_lc.reshape(-1,).to(device)
 t_lc= t_lc.reshape(-1,).to(device)
 outputs_tc= outputs_tc.reshape(-1,).to(device)
