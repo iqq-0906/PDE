@@ -417,7 +417,7 @@ M = 5000
 r =0.025610
 v=0.165856529
 T=1
-u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,xl,tl,outputs_bl,\
+u_1,u_2,u_s1,u_s2,x_i, t_i,outputs_i, x_b, t_b, outputs_b ,xl,tl,outputs_bt,\
          s_bcs_min_value, s_bcs_max_value,x_bcs_min_value, x_bcs_max_value,t_bcs_min_value, t_bcs_max_value\
             =generate_one_training_data(key,P,Q,K,M,r,v,T)
 u_1=u_1.float().to(device)
