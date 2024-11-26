@@ -22,6 +22,17 @@ import math
 from torch import vmap
 
 
+
+def set_seed(seed):
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+set_seed(0)
 device = torch.device("cuda")
 # def calculate_V(T,r,v,M,K):
 #     delta_T=T/M
@@ -163,7 +174,7 @@ class PI_DeepONet(nn.Module):
         self.optimizer = torch.optim.LBFGS(params, lr=0.0001,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
-        pbar = tqdm(range(50), desc='description')
+        pbar = tqdm(range(30), desc='description')
     
        
         for _ in pbar:
