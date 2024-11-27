@@ -515,7 +515,7 @@ def set_seed(seed):
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-set_seed(0)
+set_seed(1)
 
 
 model1 =KAN([3,2,1], base_activation=nn.Identity)
