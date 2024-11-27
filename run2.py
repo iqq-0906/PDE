@@ -187,7 +187,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =20*pde_loss+10*bc_loss
+                    loss =0.1*pde_loss+0.2*bc_loss
                     loss.backward()
                     return loss
 
@@ -313,7 +313,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # print(s_train.shape)
     outputs_i= torch.tensor(s_train)
 
-    x_bb = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
+    x_bb = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=4.822)
     t_bb = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=1)
     x_b = min_max_normalize(x_bb,x_bcs_min_value, x_bcs_max_value)
     t_b= min_max_normalize(t_bb,t_bcs_min_value,t_bcs_max_value)
