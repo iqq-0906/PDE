@@ -134,7 +134,7 @@ class PI_DeepONet(nn.Module):
         s_xx =(hessian(self.operator_net,argnums=4)(u1,u2,u_s1,u_s2,x,t).sum(dim=0)).sum(dim=0).to(device)
         s_t =jacrev(self.operator_net,argnums=5)(u1,u2,u_s1,u_s2,x,t).sum(dim=0).to(device)
         member1 = torch.tensor(0.5, device='cuda')
-        member2 = torch.tensor(0.035, device='cuda')
+        member2 = torch.tensor(0.01, device='cuda')
         member3 = torch.tensor(0.2, device='cuda')
         res =s_t-(member1)*(member2**2)*(x**2)*s_xx-member3*x*s_x+member3*s
         return res
@@ -148,7 +148,7 @@ class PI_DeepONet(nn.Module):
        
         
         # Compute loss
-        loss = torch.mean((output.flatten() - s_pred)**2)
+        loss = torch.mean(abs(output.flatten() - s_pred))
         return loss
 
 
@@ -156,7 +156,7 @@ class PI_DeepONet(nn.Module):
     def loss_res(self,u1,u2,u_s1,u_s2,x,t,output):
         # Compute forward pass
         pred = self.residual_net(u1,u2,u_s1,u_s2,x,t)
-        loss = torch.mean((output.flatten() - pred)**2)
+        loss = torch.mean(abs(output.flatten() - pred))
         return loss
 
 
@@ -174,7 +174,7 @@ class PI_DeepONet(nn.Module):
         self.optimizer = torch.optim.LBFGS(params, lr=0.00001,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
-        pbar = tqdm(range(30), desc='description')
+        pbar = tqdm(range(100), desc='description')
     
        
         for _ in pbar:
