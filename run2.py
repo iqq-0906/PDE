@@ -171,7 +171,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.00001,history_size=10, line_search_fn="strong_wolfe",
+        self.optimizer = torch.optim.LBFGS(params, lr=0.0001,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
         pbar = tqdm(range(50), desc='description')
@@ -187,7 +187,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =2*pde_loss+bc_loss
+                    loss =20*pde_loss+10*bc_loss
                     loss.backward()
                     return loss
 
