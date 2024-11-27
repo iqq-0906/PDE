@@ -506,14 +506,23 @@ outputs_tb=outputs_tb.float().to(device)
 batch_size3= 32
 dataset4= TensorDataset(x_lb,t_lb,outputs_tb)
 dataloader4 = DataLoader(dataset4, batch_size=batch_size3, shuffle=True)
+def set_seed(seed):
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
+set_seed(0)
 
 
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([40,2,1], base_activation=nn.Identity)
-model5 = KAN([2,2,2,1], base_activation=nn.Identity)
+model5 = KAN([2,10,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
