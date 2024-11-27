@@ -255,8 +255,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     f_fn = lambda x: np.interp(x, X.flatten(), gp_sample)
 
     # Create grid
-    x= np.linspace(0,7.233,P//3)
-    t = np.linspace(0,365,P//3)
+    x= np.linspace(0,4.822,P//3)
+    t = np.linspace(0,1,P//3)
     x_bc4= f_fn(x)
     x_bc4 = x.reshape(-1, 1)
     t_bc4= f_fn(t)
