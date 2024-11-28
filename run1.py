@@ -176,7 +176,7 @@ class PI_DeepONet(nn.Module):
                     bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                     pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                     # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =0.1*pde_loss+bc_loss
+                    loss =pde_loss+bc_loss
                     loss.backward()
                     return loss
 
@@ -382,8 +382,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =9000 # number of output sensors, 100 for each side
-Q =9000  # number of collocation points for each input sample
+P =6000 # number of output sensors, 100 for each side
+Q =6000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -422,8 +422,8 @@ print("outputs_i shape:", outputs_i.shape)
 dataset1 = TensorDataset(x_i,t_i,outputs_i)
 dataset2 = TensorDataset(x_b,t_b,outputs_b)
 # dataset3 = TensorDataset(x_bc4,t_bc4,s_bc4)
-batch_size1= 9000
-batch_size2= 9000
+batch_size1= 3000
+batch_size2= 3000
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
