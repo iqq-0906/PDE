@@ -324,11 +324,11 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     outputs_b = torch.zeros((Q, 1))
 
 
-    s_bc4=f1(x_bc4,t_bc1,np_K)
+    s_bc4=f1(x_bc1,t_bc1,np_K)
     s_bc4 =np.array(list(s_bc4))
     s_bc4 =s_bc4.reshape(-1,1)
     
-    x_bc11=min_max_normalize(x_bc4, x_bcs_min_value, x_bcs_max_value)
+    x_bc11=min_max_normalize(x_bc1, x_bcs_min_value, x_bcs_max_value)
     x_bc11=x_bc11.__array__()
     x_bc11= torch.tensor(x_bc11)
     t_bc11 = min_max_normalize(t_bc1, t_bcs_min_value, t_bcs_max_value)
@@ -347,7 +347,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     x_bc22 = min_max_normalize(x_bc2, x_bcs_min_value, x_bcs_max_value)
     x_bc22 = x_bc22.__array__()
     x_bc22 = torch.tensor(x_bc22)
-    t_bc22 = min_max_normalize(t_bc4, t_bcs_min_value, t_bcs_max_value)
+    t_bc22 = min_max_normalize(t_bc2, t_bcs_min_value, t_bcs_max_value)
     t_bc22 = t_bc22.__array__()
     t_bc22 = torch.tensor(t_bc22)
     s_bc22 = min_max_normalize(s_bc5, s_bcs_min_value, s_bcs_max_value)
