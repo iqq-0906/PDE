@@ -518,11 +518,11 @@ def set_seed(seed):
 set_seed(1)
 
 
-model1 =KAN([3,10,1], base_activation=nn.Identity)
-model2 = KAN([3,10,1], base_activation=nn.Identity)
+model1 =KAN([3,5,1], base_activation=nn.Identity)
+model2 = KAN([3,5,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([70,10,1], base_activation=nn.Identity)
-model5 = KAN([2,10,1], base_activation=nn.Identity)
+model4 = KAN([70,5,1], base_activation=nn.Identity)
+model5 = KAN([2,5,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
