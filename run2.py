@@ -171,7 +171,7 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.0001,history_size=10, line_search_fn="strong_wolfe",
+        self.optimizer = torch.optim.LBFGS(params, lr=0.00001,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
         pbar = tqdm(range(40), desc='description')
@@ -518,11 +518,11 @@ def set_seed(seed):
 set_seed(1)
 
 
-model1 =KAN([3,2,1], base_activation=nn.Identity)
-model2 = KAN([3,2,1], base_activation=nn.Identity)
+model1 =KAN([3,10,1], base_activation=nn.Identity)
+model2 = KAN([3,10,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([70,2,1], base_activation=nn.Identity)
-model5 = KAN([2,4,1], base_activation=nn.Identity)
+model4 = KAN([70,10,1], base_activation=nn.Identity)
+model5 = KAN([2,10,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
