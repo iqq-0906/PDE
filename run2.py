@@ -255,7 +255,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     f_fn = lambda x: np.interp(x, X.flatten(), gp_sample)
 
     # Create grid
-    x= np.linspace(0,4.822,P//3)
+    x= np.linspace(0,7.233,P//3)
     t = np.linspace(0,1,P//3)
     x_bc4= f_fn(x)
     x_bc4 = x.reshape(-1, 1)
@@ -267,8 +267,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # print(t_bc4.shape)
     np_K=K*(np.ones((P // 3, 1)))
 
-    x_bc1 = random.uniform(subkeys[2], shape=(P // 3, 1), minval=0, maxval=4.822)
-    x_bc2 = 4.822* (np.ones((P // 3, 1)))
+    x_bc1 = random.uniform(subkeys[2], shape=(P // 3, 1), minval=0, maxval=7.233)
+    x_bc2 = 7.233* (np.ones((P // 3, 1)))
     x_bc3 = np.zeros((P // 3, 1))
     # x_bc4= random.uniform(subkeys[7], shape=(P // 3, 1), minval=0, maxval=3* K)
     x_bcs = np.vstack([x_bc1, x_bc2,x_bc3])
@@ -313,7 +313,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     # print(s_train.shape)
     outputs_i= torch.tensor(s_train)
 
-    x_bb = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=4.822)
+    x_bb = random.uniform(subkeys[5], shape=(Q, 1), minval=0, maxval=7.233)
     t_bb = random.uniform(subkeys[6], shape=(Q, 1), minval=0, maxval=1)
     x_b = min_max_normalize(x_bb,x_bcs_min_value, x_bcs_max_value)
     t_b= min_max_normalize(t_bb,t_bcs_min_value,t_bcs_max_value)
@@ -522,7 +522,7 @@ model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([40,2,1], base_activation=nn.Identity)
-model5 = KAN([2,3,1], base_activation=nn.Identity)
+model5 = KAN([2,4,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
