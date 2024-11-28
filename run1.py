@@ -422,8 +422,8 @@ print("outputs_i shape:", outputs_i.shape)
 dataset1 = TensorDataset(x_i,t_i,outputs_i)
 dataset2 = TensorDataset(x_b,t_b,outputs_b)
 # dataset3 = TensorDataset(x_bc4,t_bc4,s_bc4)
-batch_size1= 1000
-batch_size2= 1000
+batch_size1= 3000
+batch_size2= 3000
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
