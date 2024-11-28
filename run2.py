@@ -444,7 +444,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =210 # number of output sensors, 100 for each side
-Q =210  # number of collocation points for each input sample
+Q =300 # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -503,7 +503,7 @@ outputs_tb= outputs_tb.reshape(-1,)
 x_lb=x_lb.float().to(device)
 t_lb=t_lb.float().to(device)
 outputs_tb=outputs_tb.float().to(device)
-batch_size3= 32
+batch_size3= 64
 dataset4= TensorDataset(x_lb,t_lb,outputs_tb)
 dataloader4 = DataLoader(dataset4, batch_size=batch_size3, shuffle=True)
 def set_seed(seed):
