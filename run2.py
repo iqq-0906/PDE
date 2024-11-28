@@ -443,8 +443,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =120 # number of output sensors, 100 for each side
-Q =120  # number of collocation points for each input sample
+P =210 # number of output sensors, 100 for each side
+Q =210  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -521,7 +521,7 @@ set_seed(1)
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([40,2,1], base_activation=nn.Identity)
+model4 = KAN([70,2,1], base_activation=nn.Identity)
 model5 = KAN([2,4,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
