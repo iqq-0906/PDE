@@ -163,7 +163,7 @@ class PI_DeepONet(nn.Module):
         self.optimizer = torch.optim.LBFGS(params, lr=0.001,history_size=10, line_search_fn="strong_wolfe",
                                tolerance_grad=1e-64, tolerance_change=1e-64)
     
-        pbar = tqdm(range(15), desc='description')
+        pbar = tqdm(range(3), desc='description')
     
        
         for _ in pbar:
@@ -422,8 +422,8 @@ print("outputs_i shape:", outputs_i.shape)
 dataset1 = TensorDataset(x_i,t_i,outputs_i)
 dataset2 = TensorDataset(x_b,t_b,outputs_b)
 # dataset3 = TensorDataset(x_bc4,t_bc4,s_bc4)
-batch_size1= 100
-batch_size2= 100
+batch_size1= 500
+batch_size2= 500
 dataloader1 = DataLoader(dataset1, batch_size=batch_size1, shuffle=True)
 dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 # dataloader3 = DataLoader(dataset3, batch_size=batch_size2, shuffle=True)
