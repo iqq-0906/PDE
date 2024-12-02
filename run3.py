@@ -198,7 +198,7 @@ class PI_DeepONet(nn.Module):
             #     model2.update_grid_from_samples(u2)
                 # model4.update_grid_from_samples(u_b1)
                 # model5.update_grid_from_samples(u_b2)
-                self.optimizer.step(closure)
+                self.optimizer.step()
        
 
             if _ % 1 == 0:
@@ -445,8 +445,8 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =210 # number of output sensors, 100 for each side
-Q =300 # number of collocation points for each input sample
+P =1200 # number of output sensors, 100 for each side
+Q =800 # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -523,7 +523,7 @@ set_seed(1)
 model1 =KAN([3,5,1], base_activation=nn.Identity)
 model2 = KAN([3,5,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([70,5,1], base_activation=nn.Identity)
+model4 = KAN([400,5,1], base_activation=nn.Identity)
 model5 = KAN([2,5,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
