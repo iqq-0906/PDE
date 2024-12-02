@@ -150,6 +150,50 @@ class PI_DeepONet(nn.Module):
 
 
 
+    # def train(self,u1,u2,u_s1, u_s2,dataloader1,dataloader2):
+    #     params1 = tuple(model1.parameters())
+    #     params2 = tuple(model2.parameters())
+    #     # params3 = tuple(model3.parameters())
+    #     params4 = tuple(model4.parameters())
+    #     params5 = tuple(model5.parameters())
+    #     params = params1 + params2+ params4+ params5
+    #     # params = (model1.parameters(), model2.parameters())
+    #     # Initialize optimizer
+
+    #     self.optimizer = torch.optim.LBFGS(params, lr=0.0001,history_size=10, line_search_fn="strong_wolfe",
+    #                            tolerance_grad=1e-64, tolerance_change=1e-64)
+    
+    #     pbar = tqdm(range(10), desc='description')
+    
+       
+    #     for _ in pbar:
+           
+            
+    #         for (x_i, t_i,outputs_i),(x_b, t_b, outputs_b) in zip(dataloader1, dataloader2):
+    #             def closure():
+    #                 global pde_loss, bc_loss
+    #                 self.optimizer.zero_grad()
+    #                 bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
+    #                 pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
+    #                 # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
+    #                 loss =10*pde_loss+5*bc_loss
+    #                 loss.backward()
+    #                 return loss
+
+    #         # # if _ % 5 == 0 and _ < 50:
+    #         #     model1.update_grid_from_samples(u1)
+    #         #     model2.update_grid_from_samples(u2)
+    #             # model4.update_grid_from_samples(u_b1)
+    #             # model5.update_grid_from_samples(u_b2)
+    #             self.optimizer.step(closure)
+       
+
+    #         if _ % 1 == 0:
+    #             pbar.set_description("pde loss: %.2e | bc loss: %.2e" % (
+    #             pde_loss.detach().cpu().numpy(), bc_loss.detach().cpu().numpy()))
+
+    #         # self.pde_losses.append(pde_loss.detach().cpu().numpy())
+    #         # self.bc_losses.append(bc_loss.detach().cpu().numpy())
     def train(self,u1,u2,u_s1, u_s2,dataloader1,dataloader2):
         params1 = tuple(model1.parameters())
         params2 = tuple(model2.parameters())
@@ -160,32 +204,33 @@ class PI_DeepONet(nn.Module):
         # params = (model1.parameters(), model2.parameters())
         # Initialize optimizer
 
-        self.optimizer = torch.optim.LBFGS(params, lr=0.0001,history_size=10, line_search_fn="strong_wolfe",
-                               tolerance_grad=1e-64, tolerance_change=1e-64)
+        # self.optimizer = torch.optim.LBFGS(params, lr=0.001,history_size=10, line_search_fn="strong_wolfe",
+        #                        tolerance_grad=1e-64, tolerance_change=1e-64)
+        self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.001)
     
-        pbar = tqdm(range(10), desc='description')
+        pbar = tqdm(range(500), desc='description')
     
        
         for _ in pbar:
            
             
             for (x_i, t_i,outputs_i),(x_b, t_b, outputs_b) in zip(dataloader1, dataloader2):
-                def closure():
-                    global pde_loss, bc_loss
-                    self.optimizer.zero_grad()
-                    bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
-                    pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
-                    # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                    loss =10*pde_loss+5*bc_loss
-                    loss.backward()
-                    return loss
+                
+                
+                self.optimizer.zero_grad()
+                bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
+                pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
+                # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
+                loss =pde_loss+bc_loss
+                loss.backward()
+        
 
             # # if _ % 5 == 0 and _ < 50:
             #     model1.update_grid_from_samples(u1)
             #     model2.update_grid_from_samples(u2)
                 # model4.update_grid_from_samples(u_b1)
                 # model5.update_grid_from_samples(u_b2)
-                self.optimizer.step(closure)
+                self.optimizer.step()
        
 
             if _ % 1 == 0:
