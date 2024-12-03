@@ -313,7 +313,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
     x_i = torch.tensor(x_bcs)
 
     t_bc1 = np.zeros((P // 3, 1))
-    t_bc2 = random.uniform(subkeys[3], shape=(P // 3, 1), minval=0, maxval=1
+    t_bc2 = random.uniform(subkeys[3], shape=(P // 3, 1), minval=0, maxval=1)
     t_bc3 = random.uniform(subkeys[4], shape=(P // 3, 1), minval=0, maxval=1)
     # t_bc4 = random.uniform(subkeys[8], shape=(P // 3, 1), minval=0, maxval=365)
     t_bcs = np.vstack([t_bc1, t_bc2,t_bc3])
