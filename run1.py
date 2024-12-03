@@ -123,7 +123,7 @@ class PI_DeepONet(nn.Module):
         s_xx =(hessian(self.operator_net,argnums=4)(u1,u2,u_s1,u_s2,x,t).sum(dim=0)).sum(dim=0).to(device)
         s_t =jacrev(self.operator_net,argnums=5)(u1,u2,u_s1,u_s2,x,t).sum(dim=0).to(device)
         member1 = torch.tensor(0.5, device='cuda')
-        member2 = torch.tensor(0.3, device='cuda')
+        member2 = torch.tensor(0.1, device='cuda')
         member3 = torch.tensor(0.03, device='cuda')
         res =s_t-(member1)*(member2**2)*(x**2)*s_xx-member3*x*s_x+member3*s
         return res
@@ -206,9 +206,9 @@ class PI_DeepONet(nn.Module):
 
         # self.optimizer = torch.optim.LBFGS(params, lr=0.001,history_size=10, line_search_fn="strong_wolfe",
         #                        tolerance_grad=1e-64, tolerance_change=1e-64)
-        self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.1)
+        self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.0001)
     
-        pbar = tqdm(range(200), desc='description')
+        pbar = tqdm(range(400), desc='description')
     
        
         for _ in pbar:
@@ -427,7 +427,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 key = random.PRNGKey(0)
 
 K=2.411
-P =1200 # number of output sensors, 100 for each side
+P =1500 # number of output sensors, 100 for each side
 Q =1000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
@@ -478,7 +478,7 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([400,2,1], base_activation=nn.Identity)
+model4 = KAN([500,2,1], base_activation=nn.Identity)
 model5 = KAN([2,10,10,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
