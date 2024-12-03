@@ -208,7 +208,7 @@ class PI_DeepONet(nn.Module):
         #                        tolerance_grad=1e-64, tolerance_change=1e-64)
         self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.00001)
     
-        pbar = tqdm(range(1000), desc='description')
+        pbar = tqdm(range(100), desc='description')
     
        
         for _ in pbar:
@@ -221,7 +221,7 @@ class PI_DeepONet(nn.Module):
                 bc_loss= self.loss_bcs(u1,u2,u_s1,u_s2,x_i, t_i,outputs_i)
                 pde_loss=self.loss_res(u1,u2,u_s1,u_s2,x_b,t_b,outputs_b)
                 # _,brunk_net_loss= model.brunk_net(u1, u2,u_s1, u_s2)
-                loss =100*pde_loss+100*bc_loss
+                loss =100*pde_loss+200*bc_loss
                 loss.backward()
         
 
