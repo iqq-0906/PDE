@@ -206,7 +206,7 @@ class PI_DeepONet(nn.Module):
 
         # self.optimizer = torch.optim.LBFGS(params, lr=0.001,history_size=10, line_search_fn="strong_wolfe",
         #                        tolerance_grad=1e-64, tolerance_change=1e-64)
-        self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.000001)
+        self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.00001)
     
         pbar = tqdm(range(200), desc='description')
     
@@ -478,8 +478,8 @@ dataloader2 = DataLoader(dataset2, batch_size=batch_size2, shuffle=True)
 model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
-model4 = KAN([400,2,1], base_activation=nn.Identity)
-model5 = KAN([2,3,1], base_activation=nn.Identity)
+model4 = KAN([400,10,1], base_activation=nn.Identity)
+model5 = KAN([2,10,10,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
