@@ -208,7 +208,7 @@ class PI_DeepONet(nn.Module):
         #                        tolerance_grad=1e-64, tolerance_change=1e-64)
         self.optimizer= torch.optim.AdamW(model.parameters(), lr=0.0001)
     
-        pbar = tqdm(range(1000), desc='description')
+        pbar = tqdm(range(500), desc='description')
     
        
         for _ in pbar:
@@ -428,7 +428,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =9000 # number of output sensors, 100 for each side
-Q =6000  # number of collocation points for each input sample
+Q =9000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -479,7 +479,7 @@ model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([3000,2,1], base_activation=nn.Identity)
-model5 = KAN([2,5,1], base_activation=nn.Identity)
+model5 = KAN([2,2,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
