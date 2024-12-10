@@ -123,8 +123,8 @@ class PI_DeepONet(nn.Module):
         s_xx =(hessian(self.operator_net,argnums=4)(u1,u2,u_s1,u_s2,x,t).sum(dim=0)).sum(dim=0).to(device)
         s_t =jacrev(self.operator_net,argnums=5)(u1,u2,u_s1,u_s2,x,t).sum(dim=0).to(device)
         member1 = torch.tensor(0.5, device='cuda')
-        member2 = torch.tensor(0.1, device='cuda')
-        member3 = torch.tensor(0.02, device='cuda')
+        member2 = torch.tensor(0.165856529, device='cuda')
+        member3 = torch.tensor(0.025610, device='cuda')
         res =s_t-(member1)*(member2**2)*(x**2)*s_xx-member3*x*s_x+member3*s
         return res
         # r =0.025610
@@ -428,7 +428,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =12000 # number of output sensors, 100 for each side
-Q =1000  # number of collocation points for each input sample
+Q =4000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
