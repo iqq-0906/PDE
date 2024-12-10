@@ -290,7 +290,7 @@ def generate_one_training_data(key,P,Q,K,M,r,v,T):
 
     # Create grid
     x= np.linspace(0,7.233,P//3)
-    t = np.linspace(0,365,P//3)
+    t = np.linspace(0,1,P//3)
     x_bc4= f_fn(x)
     x_bc4 = x.reshape(-1, 1)
     t_bc4= f_fn(t)
@@ -428,7 +428,7 @@ key = random.PRNGKey(0)
 
 K=2.411
 P =3000 # number of output sensors, 100 for each side
-Q =1000  # number of collocation points for each input sample
+Q =2000  # number of collocation points for each input sample
 M = 5000
 r =0.025610
 v=0.165856529
@@ -479,7 +479,7 @@ model1 =KAN([3,2,1], base_activation=nn.Identity)
 model2 = KAN([3,2,1], base_activation=nn.Identity)
 # model3 = KAN([2,1], base_activation=nn.Identity)
 model4 = KAN([1000,2,1], base_activation=nn.Identity)
-model5 = KAN([2,2,1], base_activation=nn.Identity)
+model5 = KAN([2,2,2,1], base_activation=nn.Identity)
 
 # model1 =BayesianNetwork()
 # model2 =BayesianNetwork()
