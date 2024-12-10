@@ -126,7 +126,7 @@ class PI_DeepONet(nn.Module):
         member2 = torch.tensor(0.3, device='cuda')
         member3 = torch.tensor(0.03, device='cuda')
         res =s_t-(member1)*(member2**2)*(x**2)*s_xx-member3*x*s_x+member3*s
-        return res
+        return resz
         # r =0.025610
         # v=0.165856529
 
